@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #AD2020;
+  --color-primary-container: #AD2020;
+  --color-primary-fixed: #AD2020;
+  --color-primary-fixed-dim: #AD2020;
+  --color-on-primary: #FFFFFF;
+  --color-on-primary-container: #FFFFFF;
+
+  --color-secondary: #BCB56F;
+  --color-secondary-fixed: #BCB56F;
+  --color-secondary-fixed-dim: #BCB56F;
+  --color-secondary-container: #AD2020;
+
+  --color-tertiary: #BCB56F;
+  --color-tertiary-container: #4a4524;
+  --color-wasabi-green: #09DF52;
+  --color-salmon-light: #AD2020;
+
+  --color-background: #000000;
+  --color-surface: #000000;
+  --color-surface-dim: #0a0a0a;
+  --color-surface-bright: #222222;
+  --color-surface-container-lowest: #000000;
+  --color-surface-container-low: #101010;
+  --color-surface-container: #141414;
+  --color-surface-container-high: #1a1a1a;
+  --color-surface-container-highest: #242424;
+  --color-surface-variant: #1f1f1f;
+
+  --color-on-background: #E2E2E2;
+  --color-on-surface: #E2E2E2;
+  --color-on-surface-variant: #BCB56F;
+  --color-outline: #AD2020;
+  --color-outline-variant: #5b2020;
+
+  --color-error: #AD2020;
+  --color-error-container: #AD2020;
+  --color-sushi-white: #FFFFFF;
+}
+/* Animación directa en CSS puro */
+@keyframes miRebote {
+  0%, 100% {
+    transform: translateY(-20px);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+}
+
+.rebote-amplio {
+  animation: miRebote 3s ease-in-out infinite;
+}

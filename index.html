@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>SUKIDESU SUSHI - Menú</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=Plus+Jakarta+Sans:wght@400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="css/output.css?v=2.0" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/menu.js" defer></script>
+  <style>
+    body { background-color: #131313; color: #e2e2e2; }
+    button { border: none; outline: none; }
+    .menu-card-img-wrapper { position: relative; overflow: hidden; width: 100%; aspect-ratio: 4/5; }
+    @media (min-width: 640px) { .menu-card-img-wrapper { width: 40%; aspect-ratio: auto; min-height: 260px; } }
+    .menu-card-img-wrapper img { transition: transform 0.3s ease; }
+    .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
+    .glow-hover:hover { box-shadow: 0 0 15px rgba(183, 31, 34, 0.4); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: theme('colors.surface'); }
+    ::-webkit-scrollbar-thumb { background: theme('colors.surface-container'); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary-container'); }
+  </style>
+</head>
+<body class="font-body-md antialiased min-h-screen flex flex-col bg-surface text-on-surface relative">
+  <nav class="bg-surface font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-40 sticky">
+    <div class="flex justify-between items-center px-5 md:px-12 py-4 w-full max-w-7xl mx-auto">
+      <div class="font-headline-lg-mobile md:font-headline-lg text-primary uppercase tracking-tighter">SUKIDESU SUSHI MENÚ</div>
+      <div class="flex items-center space-x-6"><a class="text-primary border-b-2 border-primary pb-1" href="#">Inicio</a></div>
+    </div>
+  </nav>
+
+  <main class="flex-grow w-full max-w-7xl mx-auto px-5 md:px-12 py-6">
+    <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
+      <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
+        <div class="flex-1 space-y-2">
+          <h1 class="font-headline-xl text-3xl md:text-[46px] text-primary leading-tight">¡QUÉ CHIMBA DE SUSHI!</h1>
+          <p class="font-body-md text-sm md:text-base text-on-surface max-w-lg">Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.</p>
+        </div>
+        <div class="flex-1 flex justify-center items-center py-2 shrink-0">
+          <img alt="SUKIDESU Mascot" class="w-28 h-28 md:w-52 md:h-52 object-contain rebote-amplio" src="images/screen.png"/>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-2.5 md:p-3 mb-4">
+      <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center"></div>
+    </section>
+
+    <section class="mb-16">
+      <h2 id="current-category-title" class="font-headline-lg text-secondary mb-4 flex items-center"></h2>
+      <div id="loading-spinner" class="text-center py-12">
+        <span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
+        <p class="mt-2 text-secondary font-body-md">Cargando menú...</p>
+      </div>
+      <div id="menu-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 hidden"></div>
+    </section>
+  </main>
+
+  <div id="fab-container" class="fixed bottom-6 right-6 z-40 hidden">
+    <button id="btn-open-cart" class="bg-primary-container text-sushi-white font-label-bold px-4 py-3 rounded-full shadow-lg flex items-center gap-2 hover:bg-primary transition-all active:scale-95 border border-outline-variant/40">
+      <span class="material-symbols-outlined text-xl">format_list_bulleted</span>
+      <span class="text-xs sm:text-sm">Ver mi lista</span>
+      <span id="fab-badge" class="bg-surface text-sushi-white text-xs px-2 py-0.5 rounded-full font-bold ml-1 border border-outline-variant/30">0</span>
+    </button>
+  </div>
+
+  <div id="order-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-surface border border-outline-variant/30 rounded-xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
+      <div class="p-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest">
+        <h3 class="font-headline-lg-mobile text-lg text-primary flex items-center gap-2"><span class="material-symbols-outlined">format_list_bulleted</span> Selección</h3>
+        <button id="btn-close-cart" class="text-secondary hover:text-sushi-white"><span class="material-symbols-outlined pointer-events-none">close</span></button>
+      </div>
+      <div id="modal-item-list" class="p-4 flex-grow overflow-y-auto space-y-3"></div>
+      <div class="p-4 border-t border-outline-variant/20 bg-surface-container-lowest flex justify-between items-center gap-3">
+        <button id="btn-clear-cart" class="px-4 py-2 rounded-lg border border-error/40 text-error text-xs font-label-bold hover:bg-error/10">Limpiar lista</button>
+        <button id="btn-close-cart-bottom" class="px-5 py-2 rounded-lg bg-primary-container text-sushi-white text-xs font-label-bold hover:bg-primary">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+ <footer class="bg-surface-container-lowest text-tertiary font-body-md text-body-md mt-auto border-t border-outline-variant/20">
+    <div class="flex flex-col md:flex-row justify-between items-center px-5 md:px-12 py-4 max-w-7xl mx-auto min-h-[80px]">
+      <div class="font-headline-lg text-primary mb-4 md:mb-0">SUKIDESU SUSHI</div>
+      <div class="text-sm text-secondary">© 2026 SUKIDESU SUSHI. Todos los Derechos Reservados.</div>
+    </div>
+  </footer>
+
+  <!-- Modal Pop-up Promo Frontal (Cliente) BLINDADO -->
+  <div id="clientePromoModal" class="fixed inset-0 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" style="z-index: 9999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);">
+    
+    <!-- Contenedor rígido para que nunca se estire más allá de su límite -->
+    <div class="w-full bg-[#0a0a0a] rounded-xl shadow-2xl border border-[#ffb3ac]/50 flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative" style="max-width: 512px; aspect-ratio: 512/192;" id="clientePromoContent">
+
+      <button id="close-cliente-promo" class="absolute top-2 right-2 z-30 bg-black/60 hover:bg-black text-[#ffb3b1] hover:text-white p-1 rounded-full backdrop-blur-sm transition-colors border border-[#ffb3ac]/30">
+        </span>
+      </button>
+
+      <!-- Imagen de Fondo Horizontal -->
+      <img id="cliente-promo-img" src="" class="absolute inset-0 w-full h-full object-cover object-left z-0" />
+
+      <!-- Text Container EXACTAMENTE como la previsualización del Admin -->
+      <div class="absolute inset-0 flex z-20 pointer-events-none">
+        <div style="width: 45%;"></div>
+        <div class="flex flex-col justify-center items-end text-right p-3 sm:p-4" style="width: 55%;">
+          <div class="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-2">
+            <span class="material-symbols-outlined text-[#ACC677] text-[14px] sm:text-base">campaign</span>
+            <h3 class="font-headline-lg-mobile text-[14px] sm:text-base text-[#ffb3ac] uppercase tracking-wide leading-none">¡Novedad!</h3>
+          </div>
+          <!-- Texto ajustado y limitado a 3 líneas -->
+          <p id="cliente-promo-texto" class="font-body-md text-white text-[10px] sm:text-xs leading-tight mb-2 sm:mb-3 drop-shadow-md line-clamp-3"></p>
+          <button id="btn-entendido-promo" class="bg-[#b71f22] text-white px-3 sm:px-4 py-1.5 font-label-bold rounded-lg text-[10px] sm:text-[11px] shadow-lg pointer-events-auto hover:bg-[#ffb3ac] hover:text-[#131313] transition-colors">¡Ver el Menú!</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+</html>
