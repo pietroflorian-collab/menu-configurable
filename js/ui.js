@@ -1,6 +1,7 @@
-const UI = {
+import { escapeHTML, formatPrice } from './api.js';
+
+export const UI = {
   generarTarjetaPlato(item, rol, currentSelection = []) {
-    // 1. VARIABLES BASE
     const isPausado = String(item.es_pausado).toLowerCase() === "true";
     const rawUrl = item.imagen_url || '';
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
@@ -9,19 +10,15 @@ const UI = {
     const itemId = item.id || item.nombre;
     const precioFormatted = typeof formatPrice === 'function' ? formatPrice(item.precio) : `$${item.precio}`;
     
-    // 2. COMPONENTES VISUALES COMPARTIDOS
     const categoriaTag = `<div class="bg-black/70 px-3 py-1 rounded-full border border-primary/50 w-fit backdrop-blur-sm shadow-md"><span class="font-label-bold text-[10px] text-tertiary tracking-wide uppercase">${escapeHTML(item.categoria || 'Entradas')}</span></div>`;
     const promoTag = hasPromoText ? `<div class="absolute top-3 right-3 bg-primary text-sushi-white font-label-bold text-[10px] px-2.5 py-1 rounded shadow-lg transform rotate-3 border border-sushi-white/20 w-fit text-center leading-tight z-20 pointer-events-none">${escapeHTML(item.texto_promo)}</div>` : '';
     const picanteTag = isPicante ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` : '';
     const imgTag = optimizedImgUrl ? `<img src="${escapeHTML(optimizedImgUrl)}" alt="${escapeHTML(item.nombre)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` : `<span class="font-label-bold text-on-surface-variant z-0">Sin imagen</span>`;
 
-    // =========================================================
-    // MINIATURA PROPORCIONAL PARA VISTA PREVIA (MODAL ADMIN)
-    // =========================================================
     if (rol === 'preview') {
       return `
         <div class="flex flex-col w-full max-w-[280px] my-auto mx-auto bg-[#121212] rounded-xl border border-primary-container/20 overflow-hidden relative shadow-lg">
-          <div class="aspect-[4/5] w-full relative bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0">
+          <div class="aspect-[3/4] w-full relative bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0">
             ${imgTag}
             <div class="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none z-10">
               ${categoriaTag}
@@ -42,9 +39,6 @@ const UI = {
       `;
     }
 
-    // =========================================================
-    // LÓGICA DE BOTONES PARA ADMIN GRID Y MENU CLIENTE
-    // =========================================================
     const isSelected = currentSelection.some(i => i.id === itemId);
     const adminStyles = rol === 'admin' && isPausado ? 'opacity-60 grayscale-[40%] border-primary/40' : '';
     const mobileAdminStyles = rol === 'admin' && isPausado ? 'border-primary/40 opacity-60 grayscale-[40%]' : 'border-primary-container/20';
@@ -76,12 +70,9 @@ const UI = {
         </div>`;
     }
 
-    // =========================================================
-    // TARJETAS DEFINITIVAS (PC y Móvil)
-    // =========================================================
     const pcCard = `
       <div class="hidden sm:flex menu-card bg-surface-container-low rounded-xl border border-primary/20 overflow-hidden flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${adminStyles}">
-        <div class="menu-card-img-wrapper bg-surface-container-highest flex items-center justify-center shrink-0 min-h-[240px] sm:w-2/5 w-full relative overflow-hidden">
+        <div style="aspect-ratio: 3/4;" class="menu-card-img-wrapper bg-surface-container-highest flex items-center justify-center shrink-0 min-h-[240px] sm:w-2/5 w-full relative overflow-hidden">
           ${imgTag}
           <div class="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none z-10">
             ${categoriaTag}

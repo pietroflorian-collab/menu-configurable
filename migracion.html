@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Migración de Datos Firebase</title>
+</head>
+<body style="font-family: sans-serif; padding: 2rem;">
+  <h2>Consola de Migración a bdmenusukidesu2</h2>
+  <button id="iniciar-migracion" style="padding: 10px 20px; background: #000; color: #fff; cursor: pointer;">Iniciar Migración de Catálogo</button>
+  <pre id="log" style="background: #f4f4f4; padding: 1rem; margin-top: 1rem; border: 1px solid #ccc;"></pre>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+    const oldConfig = {
+      apiKey: "AIzaSyDbZpP9gVLN3ZHlIMV9_1suAOm6ta0lmRU",
+      authDomain: "bdmenusukidesu.firebaseapp.com",
+      projectId: "bdmenusukidesu",
+      storageBucket: "bdmenusukidesu.firebasestorage.app",
+      messagingSenderId: "633626125351",
+      appId: "1:633626125351:web:fa255734fe854d0c9c5a02"
+    };
+
+    const newConfig = {
+      apiKey: "AIzaSyC-bFjUVczmEyaEL_jRhmaKJIsuTleooIw",
+      authDomain: "bdmenusukidesu2.firebaseapp.com",
+      projectId: "bdmenusukidesu2",
+      storageBucket: "bdmenusukidesu2.firebasestorage.app",
+      messagingSenderId: "193702895694",
+      appId: "1:193702895694:web:0a0083ea520096ddbc231f"
+    };
+
+    const appOld = initializeApp(oldConfig, "OldApp");
+    const appNew = initializeApp(newConfig, "NewApp");
+    const dbOld = getFirestore(appOld);
+    const dbNew = getFirestore(appNew);
+
+    const logDiv = document.getElementById("log");
+    const log = (msg) => {
+      console.log(msg);
+      logDiv.innerHTML += msg + "<br/>";
+    };
+
+    document.getElementById("iniciar-migracion").addEventListener("click", async () => {
+      log("Iniciando conexión...");
+      try {
+        // Migrar Categorías
+        log("Leyendo categorías base vieja...");
+        const catSnap = await getDocs(collection(dbOld, "categorias"));
+        log(`Encontradas ${catSnap.docs.length} categorías.`);
+        for (const documento of catSnap.docs) {
+          await setDoc(doc(dbNew, "categorias", documento.id), documento.data());
+          log(`Copiado: Categoría [${documento.id}]`);
+        }
+
+        // Migrar Productos
+        log("Leyendo productos base vieja...");
+        const prodSnap = await getDocs(collection(dbOld, "productos"));
+        log(`Encontrados ${prodSnap.docs.length} productos.`);
+        for (const documento of prodSnap.docs) {
+          await setDoc(doc(dbNew, "productos", documento.id), documento.data());
+          log(`Copiado: Producto [${documento.id}]`);
+        }
+
+        log("✅ Migración de datos finalizada.");
+      } catch (error) {
+        log("❌ Error crítico durante la migración: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

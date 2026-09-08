@@ -1,17 +1,24 @@
+import { auth, db, MenuAPI, escapeHTML, showToast } from './api.js';
+import { UI } from './ui.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+import { initializeApp, getApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
 const AuthManager = {
   currentUser: null,
   userRole: null,
 
   init() {
-    firebase.auth().onAuthStateChanged(async (user) => {
+    onAuthStateChanged(auth, async (user) => {
       const loginOverlay = document.getElementById('login-overlay');
       const adminLayout = document.getElementById('admin-layout');
 
       if (user) {
         this.currentUser = user;
         try {
-          const doc = await firebase.firestore().collection('usuarios').doc(user.uid).get();
-          this.userRole = doc.exists ? doc.data().rol : (user.uid === 'Po6AVxgzVsQRzt28xw8p29T5YN03' ? 'superadmin' : null);
+          const userDocRef = doc(db, 'usuarios', user.uid);
+          const userSnap = await getDoc(userDocRef);
+          this.userRole = userSnap.exists() ? userSnap.data().rol : (user.uid === 'Po6AVxgzVsQRzt28xw8p29T5YN03' ? 'superadmin' : null);
 
           if (this.userRole) {
             loginOverlay.classList.add('hidden');
@@ -22,7 +29,7 @@ const AuthManager = {
           }
         } catch (error) {
           console.error(error);
-          if (typeof showToast !== 'undefined') showToast("Acceso denegado.", "error");
+          showToast("Acceso denegado.", "error");
           this.logout();
         }
       } else {
@@ -42,33 +49,34 @@ const AuthManager = {
     
     btn.innerText = "Verificando..."; btn.disabled = true;
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, pass);
+      await signInWithEmailAndPassword(auth, email, pass);
     } catch (error) {
-      if (typeof showToast !== 'undefined') showToast("Credenciales inválidas", "error");
+      showToast("Credenciales inválidas", "error");
     } finally {
       btn.innerText = "Ingresar"; btn.disabled = false;
     }
   },
 
   logout() {
-    firebase.auth().signOut();
+    signOut(auth);
   },
 
   async registrarEmpleado(email, pass, rolAsignado) {
     if (this.userRole === 'editor' || (this.userRole === 'administrador' && rolAsignado !== 'editor')) {
-      if (typeof showToast !== 'undefined') showToast("No tienes privilegios para crear este perfil", "error");
+      showToast("No tienes privilegios para crear este perfil", "error");
       return;
     }
 
-    const secondaryApp = firebase.initializeApp(firebase.app().options, "WorkerApp");
+    const secondaryApp = initializeApp(getApp(), "WorkerApp");
+    const secondaryAuth = getAuth(secondaryApp);
     try {
-      const res = await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
-      await firebase.firestore().collection('usuarios').doc(res.user.uid).set({ rol: rolAsignado });
-      if (typeof showToast !== 'undefined') showToast(`Perfil (${rolAsignado}) creado con éxito`, "success");
+      const res = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+      await setDoc(doc(db, 'usuarios', res.user.uid), { rol: rolAsignado });
+      showToast(`Perfil (${rolAsignado}) creado con éxito`, "success");
     } catch (error) {
-      if (typeof showToast !== 'undefined') showToast(`Error al crear empleado: ${error.message}`, "error");
+      showToast(`Error al crear empleado: ${error.message}`, "error");
     } finally {
-      await secondaryApp.delete(); 
+      await deleteApp(secondaryApp); 
     }
   }
 };
@@ -76,6 +84,7 @@ const AuthManager = {
 const SukidesuAdmin = {
   adminItems: [], adminCategories: [], adminConfig: {},
   selectedCategory: "", searchQuery: "", customQRLogo: null,
+  cropperInstance: null, pendingImageBase64: null,
 
   init() {
     this.bindEvents();
@@ -98,9 +107,12 @@ const SukidesuAdmin = {
     bindClick("close-cat-btn", () => this.closeModalHelper("categoryModal"));
     bindClick("close-item-btn", () => this.closeModalHelper("itemModal"));
     bindClick("cancel-item-btn", () => this.closeModalHelper("itemModal"));
+    bindClick("close-cropper-btn", () => this.cancelCrop());
+    bindClick("cancel-cropper-btn", () => this.cancelCrop());
     
     bindClick("promo-save-btn", () => this.savePromoConfig());
     bindClick("qr-download-btn", () => this.downloadAdminQR());
+    bindClick("confirm-crop-btn", () => this.confirmCrop());
     
     document.getElementById("admin-search-input")?.addEventListener('input', (e) => this.handleSearch(e.target.value));
     document.getElementById("itemForm")?.addEventListener('submit', (e) => this.handleFormSubmit(e));
@@ -109,7 +121,9 @@ const SukidesuAdmin = {
     document.getElementById("qr-input-url")?.addEventListener('input', () => this.renderAdminQR());
     document.getElementById("qr-input-file")?.addEventListener('change', (e) => this.handleQRImageUpload(e));
     document.getElementById("qr-input-texto")?.addEventListener('input', () => this.renderAdminQR());
-    document.getElementById("item-link-drive")?.addEventListener('input', () => this.processDriveLink());
+    
+    // Selector interactivo de archivo local para el plato
+    document.getElementById("item-file-input")?.addEventListener('change', (e) => this.handleItemFileUpload(e));
     
     ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion', 'item-promo-texto'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => this.updateModalPreview());
@@ -171,6 +185,95 @@ const SukidesuAdmin = {
   openModalHelper(id) { document.getElementById(id)?.classList.replace("hidden", "flex"); },
   closeModalHelper(id) { document.getElementById(id)?.classList.replace("flex", "hidden"); },
 
+  // ==========================================
+  // FLUJO DE CROPPER Y GITHUB
+  // ==========================================
+  handleItemFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => { 
+      const imgElement = document.getElementById('cropper-image');
+      imgElement.src = e.target.result;
+      
+      this.openModalHelper("cropperModal");
+      
+      if (this.cropperInstance) {
+        this.cropperInstance.destroy();
+      }
+
+      setTimeout(() => {
+        imgElement.classList.remove("opacity-0");
+        this.cropperInstance = new Cropper(imgElement, {
+          aspectRatio: 3 / 4,
+          viewMode: 1,
+          autoCropArea: 0.9,
+          dragMode: 'move',
+          background: false
+        });
+      }, 100);
+    };
+    reader.readAsDataURL(file);
+  },
+
+  cancelCrop() {
+    this.closeModalHelper("cropperModal");
+    document.getElementById('item-file-input').value = "";
+    document.getElementById('cropper-image').classList.add("opacity-0");
+  },
+
+  confirmCrop() {
+    if (!this.cropperInstance) return;
+    const canvas = this.cropperInstance.getCroppedCanvas({
+      width: 600,
+      height: 800
+    });
+    
+    const base64Url = canvas.toDataURL('image/webp', 0.8);
+    this.pendingImageBase64 = base64Url.split(',')[1];
+    document.getElementById("item-imagen-url").value = base64Url;
+    
+    this.updateModalPreview();
+    this.closeModalHelper("cropperModal");
+    document.getElementById('cropper-image').classList.add("opacity-0");
+  },
+
+  async uploadToGitHub() {
+    if (!this.pendingImageBase64) return document.getElementById("item-imagen-url").value;
+
+    const secretSnap = await getDoc(doc(db, "sistema", "secretos"));
+    if (!secretSnap.exists()) throw new Error("Acceso denegado: Token no encontrado en Firestore.");
+    const token = secretSnap.data().token_github;
+
+    const nombreArchivo = `plato_${Date.now()}.webp`;
+    const repoPath = `sukidesumenu-svg/menu_sukidesu2`;
+    const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/assets/img/${nombreArchivo}`;
+
+    const res = await fetch(githubApiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Upload imagen de plato: ${nombreArchivo}`,
+        content: this.pendingImageBase64,
+        branch: "main"
+      })
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(`Fallo en GitHub API: ${errorData.message}`);
+    }
+
+    this.pendingImageBase64 = null;
+    return `https://raw.githubusercontent.com/${repoPath}/main/assets/img/${nombreArchivo}`;
+  },
+
+  // ==========================================
+  // RESTO DE MÉTODOS DE UI Y CRUD
+  // ==========================================
   openPromoModal() {
     document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true";
     document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "";
@@ -200,7 +303,7 @@ const SukidesuAdmin = {
     try {
       const res = await MenuAPI.updateConfig(payload);
       if(res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Configuración guardada", "success"); 
+        showToast("Configuración guardada", "success"); 
         this.adminConfig = payload; 
         this.closeModalHelper("promoConfigModal"); 
       } else {
@@ -208,7 +311,7 @@ const SukidesuAdmin = {
       }
     } catch (error) {
       console.error("Error en savePromoConfig:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       btn.innerText = "Guardar Anuncio"; 
       btn.disabled = false;
@@ -335,7 +438,6 @@ const SukidesuAdmin = {
     document.getElementById("btn-add-grid")?.addEventListener('click', () => this.openModal());
   },
 
-  openActionModal() { this.openModalHelper("actionModal"); },
   openCategoryModal() { this.renderCategoryManageList(); this.openModalHelper("categoryModal"); },
 
   renderCategoryManageList() {
@@ -359,7 +461,7 @@ const SukidesuAdmin = {
       const res = await MenuAPI.createCategory({ nombre: document.getElementById("new-cat-name").value.trim() });
       if (res && res.status === "success") { 
         document.getElementById("new-cat-name").value = ""; 
-        if (typeof showToast !== 'undefined') showToast("Categoría creada", "success"); 
+        showToast("Categoría creada", "success"); 
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
       } else {
@@ -367,7 +469,7 @@ const SukidesuAdmin = {
       }
     } catch (error) {
       console.error("Error en handleCreateCategorySubmit:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       btn.disabled = false; 
       btn.innerText = "+ Crear";
@@ -378,7 +480,7 @@ const SukidesuAdmin = {
     try {
       const res = await MenuAPI.updateCategory({ id: id, es_pausada: esPausada });
       if (res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Estado actualizado", "info"); 
+        showToast("Estado actualizado", "info"); 
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
       } else {
@@ -386,7 +488,7 @@ const SukidesuAdmin = {
       }
     } catch (error) {
       console.error("Error en toggleCategoryPause:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     }
   },
 
@@ -395,7 +497,7 @@ const SukidesuAdmin = {
     try {
       const res = await MenuAPI.deleteCategory(id);
       if (res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Eliminada", "success"); 
+        showToast("Eliminada", "success"); 
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
       } else {
@@ -403,7 +505,7 @@ const SukidesuAdmin = {
       }
     } catch (error) {
       console.error("Error en deleteCategory:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     }
   },
 
@@ -425,13 +527,6 @@ const SukidesuAdmin = {
     }
   },
 
-  processDriveLink() {
-    const input = document.getElementById("item-link-drive").value.trim();
-    const match = input.match(/(?:file\/d\/|id=)([\w-]+)/);
-    const finalUrl = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400` : (input.startsWith('http') ? input.replace('sz=w800', 'sz=w400') : "");
-    document.getElementById("item-imagen-url").value = finalUrl;
-  },
-
   async togglePausado(id) {
     const item = this.adminItems.find(i => i.id == id);
     if (!item) return;
@@ -440,7 +535,7 @@ const SukidesuAdmin = {
     try {
       const res = await MenuAPI.updateItem(item);
       if (res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Estado de plato actualizado", "info"); 
+        showToast("Estado de plato actualizado", "info"); 
         this.renderAdminGrid(); 
       } else {
         throw new Error("Rechazado por la base de datos.");
@@ -448,13 +543,15 @@ const SukidesuAdmin = {
     } catch (error) {
       item.es_pausado = !item.es_pausado;
       console.error("Error en togglePausado:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error al pausar: ${error.message}`, "error");
+      showToast(`Error al pausar: ${error.message}`, "error");
     }
   },
 
   openModal(item = null) {
     document.getElementById("itemForm").reset();
     document.getElementById("item-id").value = item ? item.id : "";
+    document.getElementById("item-file-input").value = "";
+    this.pendingImageBase64 = null;
     document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato";
     document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
     
@@ -463,7 +560,6 @@ const SukidesuAdmin = {
       document.getElementById("item-precio").value = item.precio || 0;
       document.getElementById("item-categoria").value = item.categoria || "";
       document.getElementById("item-imagen-url").value = item.imagen_url || "";
-      document.getElementById("item-link-drive").value = item.imagen_url || "";
       document.getElementById("item-descripcion").value = item.descripcion || "";
       document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
       document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
@@ -473,8 +569,12 @@ const SukidesuAdmin = {
         const activeDays = item.dias_promo.split(',').map(d => d.trim());
         document.querySelectorAll('input[name="promo-dia"]').forEach(cb => { if (activeDays.includes(cb.value)) cb.checked = true; });
       }
+    } else {
+      document.getElementById("item-imagen-url").value = "";
     }
-    this.processDriveLink(); this.updateModalPreview(); this.openModalHelper("itemModal");
+    
+    this.updateModalPreview(); 
+    this.openModalHelper("itemModal");
   },
 
   editItem(id) { const item = this.adminItems.find(i => i.id == id); if (item) this.openModal(item); },
@@ -484,14 +584,14 @@ const SukidesuAdmin = {
     try {
       const res = await MenuAPI.deleteItem(id); 
       if (res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Borrado exitosamente", "success"); 
+        showToast("Borrado exitosamente", "success"); 
         await this.loadAdminData(); 
       } else {
         throw new Error("No se pudo borrar el documento.");
       }
     } catch (error) {
       console.error("Error en deleteItem:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     }
   },
 
@@ -499,25 +599,28 @@ const SukidesuAdmin = {
     e.preventDefault();
     const btn = document.getElementById("submit-btn"); 
     btn.disabled = true; 
-    btn.innerText = "Guardando...";
-    
-    const payload = {
-      id: document.getElementById("item-id").value, 
-      nombre: document.getElementById("item-nombre").value,
-      precio: document.getElementById("item-precio").value, 
-      categoria: document.getElementById("item-categoria").value,
-      imagen_url: document.getElementById("item-imagen-url").value, 
-      descripcion: document.getElementById("item-descripcion").value,
-      es_picante: document.getElementById("item-picante").checked, 
-      es_pausado: document.getElementById("item-pausado").checked,
-      texto_promo: document.getElementById("item-promo-texto").value.trim(),
-      dias_promo: Array.from(document.querySelectorAll('input[name="promo-dia"]:checked')).map(cb => cb.value).join(',')
-    };
     
     try {
+      btn.innerText = "Subiendo imagen (GitHub)...";
+      const finalImageUrl = await this.uploadToGitHub();
+
+      btn.innerText = "Guardando datos...";
+      const payload = {
+        id: document.getElementById("item-id").value, 
+        nombre: document.getElementById("item-nombre").value,
+        precio: document.getElementById("item-precio").value, 
+        categoria: document.getElementById("item-categoria").value,
+        imagen_url: finalImageUrl, 
+        descripcion: document.getElementById("item-descripcion").value,
+        es_picante: document.getElementById("item-picante").checked, 
+        es_pausado: document.getElementById("item-pausado").checked,
+        texto_promo: document.getElementById("item-promo-texto").value.trim(),
+        dias_promo: Array.from(document.querySelectorAll('input[name="promo-dia"]:checked')).map(cb => cb.value).join(',')
+      };
+      
       const res = payload.id ? await MenuAPI.updateItem(payload) : await MenuAPI.createItem(payload);
       if (res && res.status === "success") { 
-        if (typeof showToast !== 'undefined') showToast("Guardado con éxito", "success"); 
+        showToast("Plato guardado con éxito", "success"); 
         this.closeModalHelper("itemModal"); 
         await this.loadAdminData(); 
       } else {
@@ -525,7 +628,7 @@ const SukidesuAdmin = {
       }
     } catch (error) {
       console.error("Error en handleFormSubmit:", error);
-      if (typeof showToast !== 'undefined') showToast(`Error: ${error.message}`, "error");
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       btn.disabled = false; 
       btn.innerText = "Guardar Plato";

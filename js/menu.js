@@ -1,3 +1,6 @@
+import { MenuAPI, escapeHTML } from './api.js';
+import { UI } from './ui.js';
+
 const SukidesuMenu = {
   allItems: [],
   categoriesList: [],
@@ -208,7 +211,6 @@ const SukidesuMenu = {
     document.getElementById("cliente-promo-texto").innerText = texto;
     const imgElement = document.getElementById("cliente-promo-img");
     
-    // Eliminamos la referencia al placeholder ya que tú no lo tienes en el index.html
     if (imagenUrl) {
       imgElement.src = imagenUrl;
       imgElement.classList.remove("hidden");
