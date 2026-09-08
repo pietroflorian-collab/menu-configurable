@@ -18,7 +18,7 @@ const AuthManager = {
         try {
           const userDocRef = doc(db, 'usuarios', user.uid);
           const userSnap = await getDoc(userDocRef);
-          this.userRole = userSnap.exists() ? userSnap.data().rol : (user.uid === 'Po6AVxgzVsQRzt28xw8p29T5YN03' ? 'superadmin' : null);
+          this.userRole = userSnap.exists() ? userSnap.data().rol : (user.uid === '6pgUHNjYxXOBd7GtYuChQEdg6tm2' ? 'superadmin' : null);
 
           if (this.userRole) {
             loginOverlay.classList.add('hidden');

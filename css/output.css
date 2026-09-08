@@ -8,6 +8,8 @@
       "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-green-500: oklch(72.3% 0.219 149.579);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -261,14 +263,14 @@
   .right-3 {
     right: calc(var(--spacing) * 3);
   }
-  .right-5 {
-    right: calc(var(--spacing) * 5);
+  .right-4 {
+    right: calc(var(--spacing) * 4);
   }
   .right-6 {
     right: calc(var(--spacing) * 6);
   }
-  .bottom-5 {
-    bottom: calc(var(--spacing) * 5);
+  .bottom-4 {
+    bottom: calc(var(--spacing) * 4);
   }
   .bottom-6 {
     bottom: calc(var(--spacing) * 6);
@@ -306,26 +308,11 @@
   .z-\[100\] {
     z-index: 100;
   }
+  .z-\[9999\] {
+    z-index: 9999;
+  }
   .col-span-full {
     grid-column: 1 / -1;
-  }
-  .container {
-    width: 100%;
-    @media (width >= 40rem) {
-      max-width: 40rem;
-    }
-    @media (width >= 48rem) {
-      max-width: 48rem;
-    }
-    @media (width >= 64rem) {
-      max-width: 64rem;
-    }
-    @media (width >= 80rem) {
-      max-width: 80rem;
-    }
-    @media (width >= 96rem) {
-      max-width: 96rem;
-    }
   }
   .-mx-5 {
     margin-inline: calc(var(--spacing) * -5);
@@ -425,9 +412,6 @@
   }
   .aspect-\[3\/4\] {
     aspect-ratio: 3/4;
-  }
-  .aspect-\[4\/5\] {
-    aspect-ratio: 4/5;
   }
   .h-1 {
     height: var(--spacing);
@@ -593,10 +577,6 @@
   }
   .-translate-y-1\/2 {
     --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .translate-y-2 {
-    --tw-translate-y: calc(var(--spacing) * 2);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .scale-95 {
@@ -846,26 +826,14 @@
   .border-wasabi-green {
     border-color: var(--color-wasabi-green);
   }
-  .border-wasabi-green\/40 {
-    border-color: color-mix(in srgb, #ACC677 40%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-wasabi-green) 40%, transparent);
-    }
-  }
   .bg-\[\#0a0a0a\] {
     background-color: #0a0a0a;
   }
   .bg-\[\#1f1f1f\] {
     background-color: #1f1f1f;
   }
-  .bg-\[\#2a1215\] {
-    background-color: #2a1215;
-  }
   .bg-\[\#121212\] {
     background-color: #121212;
-  }
-  .bg-\[\#122419\] {
-    background-color: #122419;
   }
   .bg-\[\#b71f22\] {
     background-color: #b71f22;
@@ -903,6 +871,9 @@
       background-color: color-mix(in oklab, var(--color-black) 95%, transparent);
     }
   }
+  .bg-green-500 {
+    background-color: var(--color-green-500);
+  }
   .bg-primary {
     background-color: var(--color-primary);
   }
@@ -926,6 +897,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-primary) 20%, transparent);
     }
+  }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
   }
   .bg-surface {
     background-color: var(--color-surface);

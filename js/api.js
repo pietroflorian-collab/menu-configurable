@@ -1,189 +1,87 @@
-function escapeHTML(str) {
-  if (str === null || str === undefined) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-function formatPrice(price) {
-  const amount = parseFloat(price) || 0;
-  return '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(amount);
-}
-
-function showToast(message, type = 'success') {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
-    document.body.appendChild(container);
-  }
-  const toast = document.createElement('div');
-  let bgColor = type === 'success' ? 'bg-[#122419] border-wasabi-green/40 text-white' : 'bg-[#2a1215] border-error/40 text-white';
-  let icon = type === 'success' ? 'check_circle' : 'error';
-  let iconColor = type === 'success' ? 'text-wasabi-green' : 'text-error';
-
-  toast.className = `flex items-center gap-3 px-4 py-3 rounded-lg border shadow-2xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm ${bgColor}`;
-  toast.innerHTML = `<span class="material-symbols-outlined ${iconColor} text-xl shrink-0">${icon}</span><span class="font-body-md text-xs sm:text-sm flex-grow">${escapeHTML(message)}</span>`;
-  container.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
-  setTimeout(() => {
-    toast.classList.add('translate-y-2', 'opacity-0');
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
-}
-
-// Configuración de Firebase con tus llaves
+// Inserta tu apiKey real aquí
 const firebaseConfig = {
-  apiKey: "AIzaSyDbZpP9gVLN3ZHlIMV9_1suAOm6ta0lmRU",
-  authDomain: "bdmenusukidesu.firebaseapp.com",
-  projectId: "bdmenusukidesu",
-  storageBucket: "bdmenusukidesu.firebasestorage.app",
-  messagingSenderId: "633626125351",
-  appId: "1:633626125351:web:fa255734fe854d0c9c5a02"
+  apiKey: "AIzaSyC-bFjUVczmEyaEL_jRhmaKJIsuTleooIw",
+  authDomain: "bdmenusukidesu2.firebaseapp.com",
+  projectId: "bdmenusukidesu2",
+  storageBucket: "bdmenusukidesu2.firebasestorage.app",
+  messagingSenderId: "193702895694",
+  appId: "1:193702895694:web:0a0083ea520096ddbc231f"
 };
 
-// Inicialización de la base de datos
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-const MenuAPI = {
-  
-  // ==========================================
-  // COMPILADOR HÍBRIDO (El secreto del costo $0)
-  // ==========================================
-  async compilePublicMenu() {
-    try {
-      console.log("Compilando nuevo paquete público...");
-      // 1. Recolectar toda la información granular
-      const prodSnap = await db.collection("productos").get();
-      const items = prodSnap.docs.map(doc => doc.data());
-      const catSnap = await db.collection("categorias").get();
-      const categories = catSnap.docs.map(doc => doc.data());
-      const configDoc = await db.collection("sistema").doc("configuracion").get();
-      const config = configDoc.exists ? configDoc.data() : {};
+export function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>'"]/g, match => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[match]);
+}
 
-      const publicData = { items, categories, config };
+export function formatPrice(num) {
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
+}
 
-      // 2. Escribir el documento único
-      await db.collection("sistema").doc("menu_publico").set(publicData);
-      
-      // 3. Sellar la versión con la marca de tiempo (Milisegundos)
-      const timestamp = new Date().getTime();
-      await db.collection("sistema").doc("version").set({ v: timestamp });
-      
-      return true;
-    } catch (e) {
-      console.error("Fallo crítico en el compilador:", e);
-      return false;
-    }
-  },
+export function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `fixed bottom-4 right-4 px-4 py-2 rounded shadow-lg text-white font-bold z-[9999] transition-opacity duration-300 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+  toast.innerText = message;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
 
-  // ==========================================
-  // LECTOR INTELIGENTE
-  // ==========================================
+export const MenuAPI = {
   async fetchItems(isAdmin = false) {
-    if (isAdmin) {
-      // Flujo Administrador: Lee carpetas separadas para poder editar sin colisiones
-      try {
-        const prodSnap = await db.collection("productos").get();
-        const items = prodSnap.docs.map(doc => doc.data());
-        const catSnap = await db.collection("categorias").get();
-        const categories = catSnap.docs.map(doc => doc.data());
-        const configDoc = await db.collection("sistema").doc("configuracion").get();
-        const config = configDoc.exists ? configDoc.data() : {};
-        return { items, categories, config };
-      } catch (error) {
-        showToast("Error leyendo base de datos", "error");
-        return { items: [], categories: [], config: {} };
-      }
-    } else {
-      // Flujo Cliente: Validador de Versiones
-      try {
-        const versionDoc = await db.collection("sistema").doc("version").get();
-        const nubeVersion = versionDoc.exists ? versionDoc.data().v : 0;
-        const localVersion = localStorage.getItem('sukidesu_version');
+    const items = [];
+    const snap = await getDocs(collection(db, 'productos'));
+    snap.forEach(d => items.push({ id: d.id, ...d.data() }));
 
-        // Si la versión del teléfono es igual a la de la nube, aborta conexión y usa memoria
-        if (localVersion && nubeVersion.toString() === localVersion) {
-          const cachedData = localStorage.getItem('sukidesu_menu_publico');
-          if (cachedData) return JSON.parse(cachedData);
-        }
+    const categories = [];
+    const catSnap = await getDocs(collection(db, 'categorias'));
+    catSnap.forEach(d => categories.push({ id: d.id, ...d.data() }));
 
-        // Si la versión cambió, descarga 1 solo documento consolidado
-        const menuDoc = await db.collection("sistema").doc("menu_publico").get();
-        const freshData = menuDoc.exists ? menuDoc.data() : { items: [], categories: [], config: {} };
-        
-        // Actualiza el teléfono con los datos frescos
-        localStorage.setItem('sukidesu_version', nubeVersion.toString());
-        localStorage.setItem('sukidesu_menu_publico', JSON.stringify(freshData));
-        
-        return freshData;
-      } catch (error) {
-        return { items: [], categories: [], config: {} };
-      }
-    }
+    let config = {};
+    const confSnap = await getDoc(doc(db, 'sistema', 'configuracion'));
+    if (confSnap.exists()) config = confSnap.data();
+
+    return { items, categories, config };
   },
-
-  // ==========================================
-  // OPERACIONES DE ESCRITURA (Con Autocompilación)
-  // ==========================================
-  async createItem(itemData) {
-    try {
-      const docRef = db.collection("productos").doc();
-      itemData.id = docRef.id;
-      await docRef.set(itemData);
-      await this.compilePublicMenu(); 
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+  async createItem(data) {
+    const ref = doc(collection(db, 'productos'));
+    await setDoc(ref, data);
+    return { status: 'success' };
   },
-
-  async updateItem(itemData) {
-    try {
-      await db.collection("productos").doc(itemData.id).update(itemData);
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+  async updateItem(data) {
+    const ref = doc(db, 'productos', data.id);
+    const { id, ...updateData } = data;
+    await updateDoc(ref, updateData);
+    return { status: 'success' };
   },
-
   async deleteItem(id) {
-    try {
-      await db.collection("productos").doc(id).delete();
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+    await deleteDoc(doc(db, 'productos', id));
+    return { status: 'success' };
   },
-
-  async createCategory(catData) {
-    try {
-      const docRef = db.collection("categorias").doc();
-      catData.id = docRef.id;
-      catData.es_pausada = false;
-      await docRef.set(catData);
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+  async createCategory(data) {
+    const ref = doc(collection(db, 'categorias'));
+    await setDoc(ref, { ...data, es_pausada: false });
+    return { status: 'success' };
   },
-
-  async updateCategory(catData) {
-    try {
-      await db.collection("categorias").doc(catData.id).update({ es_pausada: catData.es_pausada });
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+  async updateCategory(data) {
+    await updateDoc(doc(db, 'categorias', data.id), { es_pausada: data.es_pausada });
+    return { status: 'success' };
   },
-
   async deleteCategory(id) {
-    try {
-      await db.collection("categorias").doc(id).delete();
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+    await deleteDoc(doc(db, 'categorias', id));
+    return { status: 'success' };
   },
-
-  async updateConfig(configData) {
-    try {
-      await db.collection("sistema").doc("configuracion").set(configData, { merge: true });
-      await this.compilePublicMenu();
-      return { status: "success" };
-    } catch (error) { return { status: "error", message: error.message }; }
+  async updateConfig(data) {
+    await setDoc(doc(db, 'sistema', 'configuracion'), data, { merge: true });
+    return { status: 'success' };
   }
 };
+
