@@ -35,10 +35,31 @@ export function showToast(message, type = 'info') {
 }
 
 export const MenuAPI = {
+  async getDeployConfig() {
+    const confSnap = await getDoc(doc(db, 'sistema', 'configuracion'));
+    let config = confSnap.exists() ? confSnap.data() : {};
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    if (config.mes_actual !== currentMonth) {
+      config.mes_actual = currentMonth;
+      config.despliegues_usados = 0;
+    }
+    return config;
+  },
+  async markPending() {
+    await setDoc(doc(db, 'sistema', 'configuracion'), { cambios_pendientes: true }, { merge: true });
+  },
+  async clearPendingAndIncrement() {
+    const config = await this.getDeployConfig();
+    await setDoc(doc(db, 'sistema', 'configuracion'), { 
+      cambios_pendientes: false,
+      despliegues_usados: (config.despliegues_usados || 0) + 1,
+      mes_actual: config.mes_actual
+    }, { merge: true });
+  },
+
   async fetchItems(isAdmin = false) {
     if (!isAdmin) {
       try {
-        // El cliente lee desde el repositorio público de imágenes
         const res = await fetch(`https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/menu.json?v=${new Date().getTime()}`);
         if (!res.ok) throw new Error("Menú no publicado");
         return await res.json();
@@ -68,7 +89,6 @@ export const MenuAPI = {
     const jsonString = JSON.stringify(data);
     const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
     
-    // El administrador publica en el repositorio público de imágenes
     const repoPath = `sukidesumenu-svg/image_sukidesu`;
     const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
 
@@ -95,38 +115,46 @@ export const MenuAPI = {
     });
 
     if (!res.ok) throw new Error("Fallo al publicar JSON en GitHub");
+    await this.clearPendingAndIncrement();
     return { status: 'success' };
   },
 
   async createItem(data) {
+    await this.markPending();
     const ref = doc(collection(db, 'productos'));
     await setDoc(ref, data);
     return { status: 'success' };
   },
   async updateItem(data) {
+    await this.markPending();
     const ref = doc(db, 'productos', data.id);
     const { id, ...updateData } = data;
     await updateDoc(ref, updateData);
     return { status: 'success' };
   },
   async deleteItem(id) {
+    await this.markPending();
     await deleteDoc(doc(db, 'productos', id));
     return { status: 'success' };
   },
   async createCategory(data) {
+    await this.markPending();
     const ref = doc(collection(db, 'categorias'));
     await setDoc(ref, { ...data, es_pausada: false });
     return { status: 'success' };
   },
   async updateCategory(data) {
+    await this.markPending();
     await updateDoc(doc(db, 'categorias', data.id), { es_pausada: data.es_pausada });
     return { status: 'success' };
   },
   async deleteCategory(id) {
+    await this.markPending();
     await deleteDoc(doc(db, 'categorias', id));
     return { status: 'success' };
   },
   async updateConfig(data) {
+    await this.markPending();
     await setDoc(doc(db, 'sistema', 'configuracion'), data, { merge: true });
     return { status: 'success' };
   }

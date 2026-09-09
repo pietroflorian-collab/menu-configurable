@@ -188,30 +188,41 @@ const SukidesuAdmin = {
   },
 
   async handlePublishMenu() {
-    const pcBtn = document.getElementById("nav-publish-btn");
-    const mobBtn = document.getElementById("mobile-publish-btn");
-    const originalPcText = pcBtn ? pcBtn.innerHTML : "";
-    
-    try {
-      if (pcBtn) { pcBtn.innerHTML = `<span class="material-symbols-outlined mr-2 text-base animate-spin">sync</span> Publicando...`; pcBtn.disabled = true; }
-      if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span>`; mobBtn.disabled = true; }
+    const config = await MenuAPI.getDeployConfig();
+    const usados = config.despliegues_usados || 0;
+    const restantes = 500 - usados;
 
-      const secretSnap = await getDoc(doc(db, "sistema", "secretos"));
-      if (!secretSnap.exists()) throw new Error("Token de acceso no encontrado.");
-      const token = secretSnap.data().token_github;
+    this.showConfirmDialog(
+      "Publicar Menú en Vivo", 
+      `¿Estás seguro de que ya realizaste TODOS los cambios necesarios en el menú?\n\nTe quedan ${restantes} actualizaciones en vivo este mes.\nAprovecha para agrupar los cambios antes de publicar.`, 
+      async () => {
+        const pcBtn = document.getElementById("nav-publish-btn");
+        const mobBtn = document.getElementById("mobile-publish-btn");
+        const originalPcText = pcBtn ? pcBtn.innerHTML : "";
+        
+        try {
+          if (pcBtn) { pcBtn.innerHTML = `<span class="material-symbols-outlined mr-2 text-base animate-spin">sync</span> Publicando...`; pcBtn.disabled = true; }
+          if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span>`; mobBtn.disabled = true; }
 
-      const res = await MenuAPI.publishMenuJSON(token);
-      
-      if (res && res.status === 'success') {
-        showToast("¡Menú publicado en vivo exitosamente!", "success");
+          const secretSnap = await getDoc(doc(db, "sistema", "secretos"));
+          if (!secretSnap.exists()) throw new Error("Token de acceso no encontrado.");
+          
+          const res = await MenuAPI.publishMenuJSON(secretSnap.data().token_github);
+          
+          if (res && res.status === 'success') {
+            document.getElementById("pending-changes-banner")?.classList.add("hidden");
+            if (this.adminConfig) this.adminConfig.cambios_pendientes = false;
+            showToast("¡Menú publicado en vivo exitosamente!", "success");
+          }
+        } catch (error) {
+          console.error("Error en publicación:", error);
+          showToast(`Error: ${error.message}`, "error");
+        } finally {
+          if (pcBtn) { pcBtn.innerHTML = originalPcText; pcBtn.disabled = false; }
+          if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] pointer-events-none">cloud_upload</span>`; mobBtn.disabled = false; }
+        }
       }
-    } catch (error) {
-      console.error("Error en publicación:", error);
-      showToast(`Error: ${error.message}`, "error");
-    } finally {
-      if (pcBtn) { pcBtn.innerHTML = originalPcText; pcBtn.disabled = false; }
-      if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] pointer-events-none">cloud_upload</span>`; mobBtn.disabled = false; }
-    }
+    );
   },
 
   enableDragScroll(id) {
@@ -246,7 +257,11 @@ const SukidesuAdmin = {
     const res = await MenuAPI.fetchItems(true); 
     this.adminItems = res.items || []; 
     this.adminCategories = res.categories || []; 
-    this.adminConfig = res.config || {};
+    if (this.adminConfig.cambios_pendientes === true) {
+      document.getElementById("pending-changes-banner")?.classList.remove("hidden");
+    } else {
+      document.getElementById("pending-changes-banner")?.classList.add("hidden");
+    }
     
     document.getElementById("admin-loading").classList.add("hidden"); 
     document.getElementById("admin-grid").classList.remove("hidden");
@@ -473,6 +488,7 @@ const SukidesuAdmin = {
       const res = await MenuAPI.updateConfig(payload); 
       if(res && res.status === "success") { 
         showToast("Configuración guardada", "success"); 
+        document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         this.adminConfig = payload; 
         this.closeModalHelper("promoConfigModal"); 
       } else { 
@@ -639,6 +655,7 @@ const SukidesuAdmin = {
       if (res && res.status === "success") { 
         document.getElementById("new-cat-name").value = ""; 
         showToast("Categoría creada", "success"); 
+        document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
       } else { 
@@ -657,6 +674,7 @@ const SukidesuAdmin = {
       const res = await MenuAPI.updateCategory({ id: id, es_pausada: esPausada }); 
       if (res && res.status === "success") { 
         showToast("Estado actualizado", "info"); 
+        document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
       } 
@@ -671,6 +689,7 @@ const SukidesuAdmin = {
         const res = await MenuAPI.deleteCategory(id); 
         if (res && res.status === "success") { 
           showToast("Eliminada", "success"); 
+          document.getElementById("pending-changes-banner")?.classList.remove("hidden");
           await this.loadAdminData(); 
           this.renderCategoryManageList(); 
         } 
@@ -704,6 +723,7 @@ const SukidesuAdmin = {
       const res = await MenuAPI.updateItem(item); 
       if (res && res.status === "success") { 
         showToast("Estado actualizado", "info"); 
+        document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         this.renderAdminGrid(); 
       } else throw new Error("Rechazado"); 
     } catch (error) { 
@@ -782,6 +802,7 @@ const SukidesuAdmin = {
         const res = await MenuAPI.deleteItem(id); 
         if (res && res.status === "success") { 
           showToast("Plato e imagen eliminados", "success"); 
+          document.getElementById("pending-changes-banner")?.classList.remove("hidden");
           await this.loadAdminData(); 
         } else { 
           throw new Error("No se pudo borrar el documento."); 
@@ -822,6 +843,7 @@ const SukidesuAdmin = {
       
       if (res && res.status === "success") { 
         showToast("Plato guardado con éxito", "success"); 
+        document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         this.closeModalHelper("itemModal"); 
         await this.loadAdminData(); 
       } else { 

@@ -798,6 +798,9 @@
     --tw-border-style: dashed;
     border-style: dashed;
   }
+  .border-\[\#f59e0b\]\/50 {
+    border-color: color-mix(in oklab, #f59e0b 50%, transparent);
+  }
   .border-\[\#ffb3ac\]\/30 {
     border-color: color-mix(in oklab, #ffb3ac 30%, transparent);
   }
@@ -920,6 +923,9 @@
   }
   .bg-\[\#b71f22\] {
     background-color: #b71f22;
+  }
+  .bg-\[\#f59e0b\]\/20 {
+    background-color: color-mix(in oklab, #f59e0b 20%, transparent);
   }
   .bg-black {
     background-color: var(--color-black);
@@ -1257,8 +1263,14 @@
     --tw-tracking: var(--tracking-wider);
     letter-spacing: var(--tracking-wider);
   }
+  .whitespace-pre-line {
+    white-space: pre-line;
+  }
   .text-\[\#ACC677\] {
     color: #ACC677;
+  }
+  .text-\[\#f59e0b\] {
+    color: #f59e0b;
   }
   .text-\[\#ffb3ac\] {
     color: #ffb3ac;
