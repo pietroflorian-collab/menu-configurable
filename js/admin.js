@@ -111,6 +111,10 @@ const SukidesuAdmin = {
   bindEvents() {
     const bindClick = (id, fn) => document.getElementById(id)?.addEventListener('click', fn);
     
+    // Disparadores de Publicación
+    bindClick("nav-publish-btn", () => this.handlePublishMenu());
+    bindClick("mobile-publish-btn", () => this.handlePublishMenu());
+
     bindClick("nav-promo-btn", () => this.openPromoModal()); 
     bindClick("nav-qr-btn", () => this.openQRModal()); 
     bindClick("nav-add-btn", () => this.openModal());
@@ -181,6 +185,33 @@ const SukidesuAdmin = {
       const btn = e.target.closest('button[data-action="delete-emp"]'); 
       if (btn) this.revokeEmployee(btn.dataset.id); 
     });
+  },
+
+  async handlePublishMenu() {
+    const pcBtn = document.getElementById("nav-publish-btn");
+    const mobBtn = document.getElementById("mobile-publish-btn");
+    const originalPcText = pcBtn ? pcBtn.innerHTML : "";
+    
+    try {
+      if (pcBtn) { pcBtn.innerHTML = `<span class="material-symbols-outlined mr-2 text-base animate-spin">sync</span> Publicando...`; pcBtn.disabled = true; }
+      if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span>`; mobBtn.disabled = true; }
+
+      const secretSnap = await getDoc(doc(db, "sistema", "secretos"));
+      if (!secretSnap.exists()) throw new Error("Token de acceso no encontrado.");
+      const token = secretSnap.data().token_github;
+
+      const res = await MenuAPI.publishMenuJSON(token);
+      
+      if (res && res.status === 'success') {
+        showToast("¡Menú publicado en vivo exitosamente!", "success");
+      }
+    } catch (error) {
+      console.error("Error en publicación:", error);
+      showToast(`Error: ${error.message}`, "error");
+    } finally {
+      if (pcBtn) { pcBtn.innerHTML = originalPcText; pcBtn.disabled = false; }
+      if (mobBtn) { mobBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] pointer-events-none">cloud_upload</span>`; mobBtn.disabled = false; }
+    }
   },
 
   enableDragScroll(id) {

@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/fireba
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-// Inserta tu apiKey real aquí
 const firebaseConfig = {
   apiKey: "AIzaSyC-bFjUVczmEyaEL_jRhmaKJIsuTleooIw",
   authDomain: "bdmenusukidesu2.firebaseapp.com",
@@ -37,6 +36,18 @@ export function showToast(message, type = 'info') {
 
 export const MenuAPI = {
   async fetchItems(isAdmin = false) {
+    if (!isAdmin) {
+      try {
+        // El cliente lee desde el repositorio público de imágenes
+        const res = await fetch(`https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/menu.json?v=${new Date().getTime()}`);
+        if (!res.ok) throw new Error("Menú no publicado");
+        return await res.json();
+      } catch (error) {
+        console.error("Error al cargar JSON público:", error);
+        return { items: [], categories: [], config: {} };
+      }
+    }
+
     const items = [];
     const snap = await getDocs(collection(db, 'productos'));
     snap.forEach(d => items.push({ id: d.id, ...d.data() }));
@@ -51,6 +62,42 @@ export const MenuAPI = {
 
     return { items, categories, config };
   },
+  
+  async publishMenuJSON(token) {
+    const data = await this.fetchItems(true);
+    const jsonString = JSON.stringify(data);
+    const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+    
+    // El administrador publica en el repositorio público de imágenes
+    const repoPath = `sukidesumenu-svg/image_sukidesu`;
+    const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
+
+    let sha = "";
+    try {
+      const resGet = await fetch(githubApiUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+      if (resGet.ok) {
+        const fileData = await resGet.json();
+        sha = fileData.sha;
+      }
+    } catch (e) {}
+
+    const body = {
+      message: `Compilacion Automatica del Menu JSON`,
+      content: base64Content,
+      branch: "main"
+    };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(githubApiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error("Fallo al publicar JSON en GitHub");
+    return { status: 'success' };
+  },
+
   async createItem(data) {
     const ref = doc(collection(db, 'productos'));
     await setDoc(ref, data);
@@ -84,4 +131,3 @@ export const MenuAPI = {
     return { status: 'success' };
   }
 };
-

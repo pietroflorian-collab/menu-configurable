@@ -51,6 +51,7 @@
     --drop-shadow-md: 0 3px 3px rgb(0 0 0 / 0.12);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
+    --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --blur-sm: 8px;
     --blur-md: 12px;
     --default-transition-duration: 150ms;
@@ -634,6 +635,9 @@
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
+  .animate-pulse {
+    animation: var(--animate-pulse);
+  }
   .animate-spin {
     animation: var(--animate-spin);
   }
@@ -898,6 +902,12 @@
   }
   .border-wasabi-green {
     border-color: var(--color-wasabi-green);
+  }
+  .border-wasabi-green\/50 {
+    border-color: color-mix(in srgb, #ACC677 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-wasabi-green) 50%, transparent);
+    }
   }
   .bg-\[\#0a0a0a\] {
     background-color: #0a0a0a;
@@ -1458,6 +1468,9 @@
     display: none;
   }
   @media (hover: hover) {
+    .hover\:animate-none:hover {
+      animation: none;
+    }
     .hover\:border-primary:hover {
       border-color: var(--color-primary);
     }
@@ -1963,6 +1976,11 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
   }
 }
 @layer properties {
