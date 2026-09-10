@@ -528,7 +528,7 @@ const SukidesuAdmin = {
     if (!canvas) return; 
     const ctx = canvas.getContext('2d');
     
-    let baseUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/"; 
+    let baseUrl = document.getElementById('qr-input-url').value.trim() || "https://menusukidesu.sukidesumenu.workers.dev/"; 
     if(baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1); 
     
     const textoQR = document.getElementById('qr-input-texto')?.value.trim() || 'MENÚ'; 
@@ -770,7 +770,7 @@ const SukidesuAdmin = {
   },
   
   async deleteItem(id) { 
-    this.showConfirmDialog("Eliminar Plato", "¿Estás seguro? Esta acción borrará el plato y la imagen del del Menú de forma permanente.", async () => {
+    this.showConfirmDialog("Eliminar Plato", "¿Estás seguro? Esta acción borrará el plato y la imagen del Menú de forma permanente.", async () => {
       try { 
         const item = this.adminItems.find(i => i.id == id);
         if (item && item.imagen_url && item.imagen_url.includes('githubusercontent')) {
@@ -820,13 +820,26 @@ const SukidesuAdmin = {
     btn.disabled = true; 
     
     try {
+      const nombreInput = document.getElementById("item-nombre").value.trim();
+      const itemId = document.getElementById("item-id").value;
+
+      // Validación de duplicados apuntando a this.adminItems
+      const esDuplicado = this.adminItems.some(item => 
+        item.nombre.toLowerCase() === nombreInput.toLowerCase() && item.id !== itemId
+      );
+
+      if (esDuplicado) {
+        showToast("Ya existe un plato con este nombre.", "error");
+        btn.disabled = false;
+        return; 
+      }
+
       btn.innerText = "Subiendo imagen..."; 
       const finalImageUrl = await this.uploadToGitHub(); 
       btn.innerText = "Guardando datos...";
       
-      const itemId = document.getElementById("item-id").value;
       const payload = {
-        nombre: document.getElementById("item-nombre").value, 
+        nombre: nombreInput, 
         precio: document.getElementById("item-precio").value, 
         categoria: document.getElementById("item-categoria").value,
         imagen_url: finalImageUrl, 

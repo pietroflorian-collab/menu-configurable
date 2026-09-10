@@ -47,13 +47,34 @@ const SukidesuMenu = {
     const categoryBar = document.getElementById("category-bar"); categoryBar.innerHTML = categoriasVisibles.map(cat => `<button data-category="${escapeHTML(cat)}" class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${this.selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright border border-outline-variant/20'}">${escapeHTML(cat)}</button>`).join("");
     const titleEl = document.getElementById("current-category-title"); if (titleEl) titleEl.innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${escapeHTML(this.selectedCategory)}`;
   },
-  filterCategory(cat) { this.selectedCategory = cat; this.setupCategoryFilter(); this.renderMenu(); },
   renderMenu() {
-    const grid = document.getElementById("menu-grid"); if (!grid) return; const today = new Date().toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
-    const filtered = this.allItems.filter(i => { if (this.selectedCategory === "Combos y Promo") { const cat = (i.categoria || "").toLowerCase(); const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase()) : []; const isPromoToday = activeDays.includes(today); return (cat === "combos" || cat === "promociones" || cat === "promos" || cat === "promo" || isPromoToday); } return i.categoria === this.selectedCategory; });
+    const grid = document.getElementById("menu-grid"); if (!grid) return; 
+    
+    // Obtenemos el día actual y le quitamos las tildes (ej: 'miércoles' -> 'miercoles')
+    const rawToday = new Date().toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
+    const today = rawToday.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+    const filtered = this.allItems.filter(i => { 
+      if (this.selectedCategory === "Combos y Promo") { 
+        const cat = (i.categoria || "").toLowerCase(); 
+        const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) : []; 
+        const isPromoToday = activeDays.includes(today); 
+        
+        // Si el plato es un combo, se muestra todos los días sin excepción
+        if (cat.includes("combo")) return true;
+        
+        // Si el plato es una promoción o tiene días asignados, se muestra SOLO si el día actual coincide
+        if (cat.includes("promo") || activeDays.length > 0) return isPromoToday;
+        
+        return false;
+      } 
+      return i.categoria === this.selectedCategory; 
+    });
+    
     if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-12 bg-surface-container rounded-xl border border-dashed border-outline-variant/30 my-4"><span class="material-symbols-outlined text-secondary text-5xl mb-3">ramen_dining</span><h3 class="font-headline-lg-mobile text-lg text-secondary">No hay platos disponibles</h3><p class="font-body-md text-xs text-secondary/70 mt-1">Pronto añadiremos nuevas opciones.</p></div>`; return; }
     grid.innerHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'client', this.getSelection())).join("");
   },
+  filterCategory(cat) { this.selectedCategory = cat; this.setupCategoryFilter(); this.renderMenu(); },
   mostrarPromoFrontal(config) {
     if (!config) return; const isActiva = String(config.promo_activa).toLowerCase() === "true"; const texto = config.promo_texto || ""; const imagenUrl = config.promo_imagen || "";
     if (!isActiva || texto.trim() === "") return;

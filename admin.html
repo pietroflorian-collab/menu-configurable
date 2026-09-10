@@ -50,44 +50,85 @@
   <div id="admin-layout" class="hidden w-full h-full flex flex-col md:flex-row flex-1">
     
     <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-primary/20 shadow-md flex-col p-4 z-40">
-      <div class="mb-6 px-4 py-4 text-center border-b border-primary/20">
+      <div class="mb-6 px-4 py-4 text-center border-b border-primary/20 shrink-0">
         <div class="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-2 border-primary">
           <div class="flex-1 flex justify-center items-center"><img class="object-contain" src="images/screen.png" alt="Logo"/></div>
         </div>
         <h1 class="font-headline-lg text-lg text-primary tracking-tighter uppercase mb-0.5">Gestión de Menú</h1>
       </div>
       
-      <!-- BOTÓN MAESTRO DE PUBLICACIÓN -->
-      <div class="px-2 mb-4">
-        <button id="nav-publish-btn" class="w-full bg-wasabi-green text-surface font-label-bold text-sm py-3 rounded-lg shadow-lg hover:opacity-90 flex items-center justify-center transition-all animate-pulse hover:animate-none">
-          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">cloud_upload</span> Publicar Menú en Vivo
+      <!-- BOTÓN MAESTRO -->
+      <div class="px-2 mb-4 shrink-0">
+        <button id="nav-publish-btn" class="w-full bg-wasabi-green text-surface font-label-bold text-sm py-3 rounded-lg shadow-lg hover:opacity-90 flex items-center justify-center transition-all">
+          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">cloud_upload</span> Publicar Menú
         </button>
       </div>
 
-      <div class="flex-1 space-y-2 px-2 overflow-y-auto">
-        <a class="flex items-center px-4 py-3 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg border border-primary/30 mb-2" href="index.html" target="_blank">
-          <span class="material-symbols-outlined mr-3 text-primary pointer-events-none">storefront</span><span class="font-label-bold pointer-events-none">Ver Carta (Cliente)</span>
-        </a>
-        <button id="nav-promo-btn" class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group">
-          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none">campaign</span><span class="font-label-bold pointer-events-none">Banner Promo</span>
+      <!-- CONTENEDOR ACORDEÓN -->
+      <div class="flex-1 px-2 overflow-y-auto flex flex-col gap-3 pb-4">
+        
+        <!-- ACORDEÓN 1: MENÚ Y CATÁLOGO -->
+        <div class="flex flex-col shrink-0">
+          <button onclick="document.getElementById('menu-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
+            <div class="flex items-center pointer-events-none">
+              <span class="material-symbols-outlined mr-3 text-primary">inventory_2</span>
+              <span class="font-label-bold text-tertiary group-hover:text-primary">Catálogo</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary chevron transition-transform duration-200 pointer-events-none">expand_more</span>
+          </button>
+          <div id="menu-sub" class="hidden flex-col gap-1 pl-4 mt-1">
+            <button id="nav-add-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">add</span><span class="font-label-bold pointer-events-none text-sm">Nuevo Plato</span>
+            </button>
+            <button id="nav-cat-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">folder_managed</span><span class="font-label-bold pointer-events-none text-sm">Categorías</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ACORDEÓN 2: MARKETING -->
+        <div class="flex flex-col shrink-0">
+          <button onclick="document.getElementById('marketing-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
+            <div class="flex items-center pointer-events-none">
+              <span class="material-symbols-outlined mr-3 text-primary">campaign</span>
+              <span class="font-label-bold text-tertiary group-hover:text-primary">Marketing</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary chevron transition-transform duration-200 pointer-events-none">expand_more</span>
+          </button>
+          <div id="marketing-sub" class="hidden flex-col gap-1 pl-4 mt-1">
+            <button id="nav-promo-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">loyalty</span><span class="font-label-bold pointer-events-none text-sm">Banner Promo</span>
+            </button>
+            <button id="nav-qr-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">qr_code_2</span><span class="font-label-bold pointer-events-none text-sm">Generar QR</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ACORDEÓN 3: ADMINISTRACIÓN -->
+        <div class="flex flex-col shrink-0">
+          <button onclick="document.getElementById('admin-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
+            <div class="flex items-center pointer-events-none">
+              <span class="material-symbols-outlined mr-3 text-primary">admin_panel_settings</span>
+              <span class="font-label-bold text-tertiary group-hover:text-primary">Sistema</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary chevron transition-transform duration-200 pointer-events-none">expand_more</span>
+          </button>
+          <div id="admin-sub" class="hidden flex-col gap-1 pl-4 mt-1">
+            <button id="nav-emp-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">manage_accounts</span><span class="font-label-bold pointer-events-none text-sm">Personal</span>
+            </button>
+            <a class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group" href="index.html" target="_blank">
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">storefront</span><span class="font-label-bold pointer-events-none text-sm">Ver Carta</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- CERRAR SESIÓN (Fijo al final) -->
+        <button id="nav-logout-btn" class="w-full flex items-center px-4 py-3 mt-auto text-tertiary bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors shrink-0">
+          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-error pointer-events-none">logout</span><span class="font-label-bold pointer-events-none">Cerrar Sesión</span>
         </button>
-        <button id="nav-qr-btn" class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group">
-          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none">qr_code_2</span><span class="font-label-bold pointer-events-none">Generar QR Mesa</span>
-        </button>
-        <button id="nav-emp-btn" class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group">
-          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none">manage_accounts</span><span class="font-label-bold pointer-events-none">Personal</span>
-        </button>
-      </div>
-      <div class="px-2 py-4 mt-auto border-t border-primary/20 space-y-3">
-        <button id="nav-add-btn" class="w-full bg-primary text-sushi-white font-label-bold text-sm py-3 rounded-lg hover:opacity-90 flex items-center justify-center">
-          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">add</span> Nuevo Plato
-        </button>
-        <button id="nav-cat-btn" class="w-full bg-surface-container-highest text-tertiary font-label-bold text-sm py-2.5 rounded-lg border border-primary/40 hover:bg-surface-bright flex items-center justify-center">
-          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">folder_managed</span> Gestionar Categorías
-        </button>
-        <button id="nav-logout-btn" class="w-full bg-error/10 text-error font-label-bold text-sm py-2.5 rounded-lg border border-error/40 hover:bg-error/20 flex items-center justify-center mt-2 transition-colors">
-          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">logout</span> Cerrar Sesión
-        </button>
+        
       </div>
     </nav>
 
@@ -366,7 +407,7 @@
       </div>
       <div class="px-5 py-4 bg-surface-container-highest border-t border-primary/20 flex gap-3 justify-center">
         <button id="cancel-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs border border-primary/40 text-secondary hover:bg-surface-bright transition-colors flex-1">Cancelar</button>
-        <button id="execute-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs bg-error text-white hover:bg-error/90 shadow-md transition-colors flex-1">Sí, Publicar</button>
+        <button id="execute-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs bg-error text-white hover:bg-error/90 shadow-md transition-colors flex-1">Sí, Eliminar</button>
       </div>
     </div>
   </div>
