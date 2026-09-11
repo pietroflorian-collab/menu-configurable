@@ -128,5 +128,18 @@
       </div>
     </div>
   </div>
+  <!-- Detector de sesión administrativa -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('admin') === 'true') {
+        const backBtn = document.createElement('a');
+        backBtn.href = 'admin.html';
+        backBtn.className = 'fixed bottom-6 left-6 z-[100] bg-surface-container-high text-primary font-label-bold px-4 py-3 rounded-full shadow-2xl border border-primary/40 flex items-center gap-2 hover:bg-surface-bright transition-all active:scale-95';
+        backBtn.innerHTML = '<span class="material-symbols-outlined text-xl pointer-events-none">arrow_back</span><span class="text-xs sm:text-sm pointer-events-none">Volver al Gestor</span>';
+        document.body.appendChild(backBtn);
+      }
+    });
+  </script>
 </body>
 </html>
