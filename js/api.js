@@ -60,8 +60,8 @@ export const MenuAPI = {
   async fetchItems(isAdmin = false) {
     if (!isAdmin) {
       try {
-        const res = await fetch(`https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/menu.json?v=${new Date().getTime()}`);
-        if (!res.ok) throw new Error("Menú no publicado");
+        const res = await fetch(`https://recursos-sukidesu.pages.dev/menu.json?v=${new Date().getTime()}`);
+        if (!res.ok) throw new Error("Menú no publicado o no encontrado en Cloudflare");
         return await res.json();
       } catch (error) {
         console.error("Error al cargar JSON público:", error);
@@ -85,24 +85,30 @@ export const MenuAPI = {
   },
   
   async publishMenuJSON(token) {
+    if (!token) throw new Error("Token de GitHub requerido para publicar.");
+
     const data = await this.fetchItems(true);
     const jsonString = JSON.stringify(data);
-    const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+    const base64Content = btoa(unescape(encodeURIComponent(jsonString))); 
     
     const repoPath = `sukidesumenu-svg/image_sukidesu`;
     const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
 
     let sha = "";
     try {
-      const resGet = await fetch(githubApiUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+      const resGet = await fetch(githubApiUrl, { 
+        headers: { 'Authorization': `Bearer ${token}` } 
+      });
       if (resGet.ok) {
         const fileData = await resGet.json();
         sha = fileData.sha;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("No se pudo obtener el SHA previo, creando archivo nuevo.");
+    }
 
     const body = {
-      message: `Compilacion Automatica del Menu JSON`,
+      message: `Compilación automática del menú JSON (Admin)`,
       content: base64Content,
       branch: "main"
     };
@@ -110,11 +116,14 @@ export const MenuAPI = {
 
     const res = await fetch(githubApiUrl, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: { 
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json' 
+      },
       body: JSON.stringify(body)
     });
 
-    if (!res.ok) throw new Error("Fallo al publicar JSON en GitHub");
+    if (!res.ok) throw new Error("Fallo al publicar JSON en el repositorio de GitHub");
     await this.clearPendingAndIncrement();
     return { status: 'success' };
   },

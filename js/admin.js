@@ -447,7 +447,7 @@ const SukidesuAdmin = {
     }
     
     this.pendingImageBase64 = null; 
-    return `https://raw.githubusercontent.com/${repoPath}/main/assets/img/${nombreArchivo}`;
+    return `https://recursos-sukidesu.pages.dev/assets/img/${nombreArchivo}`;
   },
 
   openPromoModal() {
@@ -773,7 +773,11 @@ const SukidesuAdmin = {
     this.showConfirmDialog("Eliminar Plato", "¿Estás seguro? Esta acción borrará el plato y la imagen del Menú de forma permanente.", async () => {
       try { 
         const item = this.adminItems.find(i => i.id == id);
-        if (item && item.imagen_url && item.imagen_url.includes('githubusercontent')) {
+        
+        // CORRECCIÓN: Detecta tanto las URLs viejas de GitHub como las nuevas de Cloudflare
+        const esImagenValida = item && item.imagen_url && (item.imagen_url.includes('githubusercontent') || item.imagen_url.includes('recursos-sukidesu.pages.dev'));
+        
+        if (esImagenValida) {
           try {
             const secretSnap = await getDoc(doc(db, "sistema", "secretos"));
             if (secretSnap.exists()) {

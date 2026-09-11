@@ -3,7 +3,11 @@ import { escapeHTML, formatPrice } from './api.js';
 export const UI = {
   generarTarjetaPlato(item, rol, currentSelection = []) {
     const isPausado = String(item.es_pausado).toLowerCase() === "true";
-    const rawUrl = item.imagen_url || '';
+    
+    let rawUrl = item.imagen_url || '';
+    // Intercepción arquitectónica: Fuerza la carga de imágenes por Cloudflare CDN
+    rawUrl = rawUrl.replace('https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main', 'https://recursos-sukidesu.pages.dev');
+    
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
     const isPicante = String(item.es_picante).toLowerCase() === "true";
     const hasPromoText = item.texto_promo && item.texto_promo.trim() !== "";
