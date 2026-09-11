@@ -1,9 +1,7 @@
-const CACHE_NAME = 'sukidesu-v6';
+const CACHE_NAME = 'sukidesu-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './admin.html',
-  './manifest-admin.json',
   './css/output.css',
   './js/api.js',
   './images/screen.png',
@@ -36,8 +34,14 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignora peticiones que no sean GET y cualquier llamada a dominios o servicios de Google
-  if (event.request.method !== 'GET' || event.request.url.includes('google')) {
+  // Ignora peticiones que no sean GET, servicios de Google, y panel de administración
+  if (
+    event.request.method !== 'GET' || 
+    event.request.url.includes('google') ||
+    event.request.url.includes('admin.html') ||
+    event.request.url.includes('manifest-admin.json') ||
+    event.request.url.includes('identitytoolkit')
+  ) {
     return;
   }
 
