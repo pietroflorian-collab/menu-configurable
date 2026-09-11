@@ -115,12 +115,21 @@ const SukidesuAdmin = {
     bindClick("nav-publish-btn", () => this.handlePublishMenu());
     bindClick("mobile-publish-btn", () => this.handlePublishMenu());
 
+    // Botones de Navegación (PC)
     bindClick("nav-promo-btn", () => this.openPromoModal()); 
     bindClick("nav-qr-btn", () => this.openQRModal()); 
     bindClick("nav-add-btn", () => this.openModal());
     bindClick("nav-cat-btn", () => this.openCategoryModal()); 
     bindClick("nav-emp-btn", () => this.openEmployeeModal()); 
     bindClick("nav-logout-btn", () => AuthManager.logout()); 
+    
+    // Espejo Móvil (Cierra el panel lateral y ejecuta la acción)
+    const closeMobileMenu = () => document.getElementById('mobile-menu-overlay')?.classList.add('hidden');
+    bindClick("mobile-new-btn", () => { closeMobileMenu(); this.openModal(); });
+    bindClick("mobile-cat-btn", () => { closeMobileMenu(); this.openCategoryModal(); });
+    bindClick("mobile-promo-btn", () => { closeMobileMenu(); this.openPromoModal(); });
+    bindClick("mobile-qr-btn", () => { closeMobileMenu(); this.openQRModal(); });
+    bindClick("mobile-emp-btn", () => { closeMobileMenu(); this.openEmployeeModal(); });
     bindClick("mobile-logout-btn", () => AuthManager.logout());
     
     bindClick("close-promo-btn", () => this.closeModalHelper("promoConfigModal")); 

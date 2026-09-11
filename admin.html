@@ -122,6 +122,7 @@
             <button id="nav-emp-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
               <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">manage_accounts</span><span class="font-label-bold pointer-events-none text-sm">Personal</span>
             </button>
+            <!-- Modificado para inyectar admin=true[cite: 6] -->
             <a class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group" href="index.html?admin=true" target="_blank">
               <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">storefront</span><span class="font-label-bold pointer-events-none text-sm">Ver Carta</span>
             </a>
@@ -137,6 +138,8 @@
     </nav>
 
     <main class="flex-1 ml-0 md:ml-64 flex flex-col relative bg-transparent z-10 min-w-0">
+      
+      <!-- Menú Hamburguesa[cite: 6] -->
       <div class="md:hidden flex flex-col z-30 shrink-0">
         <!-- ALERTA DE CAMBIOS PENDIENTES (Móvil) -->
         <div id="pending-changes-banner" class="hidden bg-[#f59e0b]/20 border-b border-[#f59e0b]/50 text-[#f59e0b] px-4 py-2 flex items-center justify-center gap-2">
@@ -159,7 +162,7 @@
         </div>
       </div>
 
-      <!-- MENÚ DESPLEGABLE MÓVIL (Oculto por defecto) -->
+      <!-- MENÚ DESPLEGABLE MÓVIL (Oculto por defecto)[cite: 6] -->
       <div id="mobile-menu-overlay" class="hidden md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex justify-start" onclick="if(event.target === this) this.classList.add('hidden')">
         <div class="w-64 bg-surface-container-high h-full shadow-2xl border-r border-primary/30 flex flex-col animate-slide-in-left">
           <div class="p-4 border-b border-primary/20 flex justify-between items-center bg-surface">
@@ -174,7 +177,7 @@
             <button id="mobile-new-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
               <span class="material-symbols-outlined mr-3 text-secondary text-lg">add_circle</span><span class="font-label-bold text-sm">Nuevo Plato</span>
             </button>
-            <button onclick="document.getElementById('nav-cat-btn').click(); document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+            <button id="mobile-cat-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
               <span class="material-symbols-outlined mr-3 text-secondary text-lg">folder_managed</span><span class="font-label-bold text-sm">Categorías</span>
             </button>
 
@@ -187,7 +190,7 @@
             </button>
 
             <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-4">Sistema</div>
-            <button onclick="document.getElementById('nav-emp-btn').click(); document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+            <button id="mobile-emp-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
               <span class="material-symbols-outlined mr-3 text-secondary text-lg">manage_accounts</span><span class="font-label-bold text-sm">Personal</span>
             </button>
             <a href="index.html?admin=true" target="_blank" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
@@ -202,6 +205,7 @@
           </div>
         </div>
       </div>
+      <!-- Fin Menú Hamburguesa -->
 
       <header class="px-5 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shrink-0">
         <div>
