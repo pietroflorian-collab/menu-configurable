@@ -127,7 +127,7 @@ const imgTag = optimizedImgUrl
               ${precioFormatted}
             </div>
           </div>
-          <p class="font-body-md text-on-surface-variant text-sm flex-grow line-clamp-3">${escapeHTML(item.descripcion || '')}</p>
+          <p data-expandable="true" class="font-body-md text-on-surface-variant text-sm mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200 mt-2" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
           <div class="mt-3 flex gap-2 empty:hidden">${picanteTag}</div>
           ${mobileActionContainer}
         </div>
