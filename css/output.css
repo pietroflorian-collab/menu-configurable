@@ -659,6 +659,9 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .justify-start {
+    justify-content: flex-start;
+  }
   .gap-1 {
     gap: var(--spacing);
   }
@@ -870,12 +873,6 @@
   .border-wasabi-green {
     border-color: var(--color-wasabi-green);
   }
-  .border-wasabi-green\/50 {
-    border-color: color-mix(in srgb, #ACC677 50%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-wasabi-green) 50%, transparent);
-    }
-  }
   .bg-\[\#0a0a0a\] {
     background-color: #0a0a0a;
   }
@@ -941,12 +938,6 @@
   }
   .bg-primary-container {
     background-color: var(--color-primary-container);
-  }
-  .bg-primary-container\/20 {
-    background-color: color-mix(in srgb, #b71f22 20%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-primary-container) 20%, transparent);
-    }
   }
   .bg-primary\/10 {
     background-color: color-mix(in srgb, #AD2020 10%, transparent);
@@ -1490,14 +1481,6 @@
     .hover\:bg-primary:hover {
       background-color: var(--color-primary);
     }
-    .hover\:bg-primary-container\/30:hover {
-      background-color: color-mix(in srgb, #b71f22 30%, transparent);
-    }
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-primary-container\/30:hover {
-        background-color: color-mix(in oklab, var(--color-primary-container) 30%, transparent);
-      }
-    }
     .hover\:bg-primary\/5:hover {
       background-color: color-mix(in srgb, #AD2020 5%, transparent);
     }
@@ -1700,6 +1683,21 @@
 }
 .rebote-amplio {
   animation: miRebote 3s ease-in-out infinite;
+}
+@layer utilities {
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
 @property --tw-translate-x {
   syntax: "*";

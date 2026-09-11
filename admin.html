@@ -137,26 +137,69 @@
     </nav>
 
     <main class="flex-1 ml-0 md:ml-64 flex flex-col relative bg-transparent z-10 min-w-0">
-      <div class="md:hidden flex justify-between items-center px-4 py-3 bg-surface-container border-b border-primary/20 z-30 shrink-0">
-        <!-- ALERTA DE CAMBIOS PENDIENTES -->
-       <div id="pending-changes-banner" class="hidden bg-[#f59e0b]/20 border-b border-[#f59e0b]/50 text-[#f59e0b] px-4 py-2 flex items-center justify-center gap-2 shrink-0 z-20">
-         <span class="material-symbols-outlined text-sm">notification_important</span>
-         <span class="font-label-bold text-xs">Tienes cambios sin publicar. Los clientes aún ven la versión anterior del menú.</span>
-       </div>
-        <h1 class="font-headline-lg-mobile text-primary uppercase text-sm">Gestor</h1>
-        <div class="flex gap-1.5 overflow-x-auto no-scrollbar">
-          <!-- BOTÓN PUBLICAR MÓVIL -->
-          <button id="mobile-publish-btn" class="p-1.5 bg-wasabi-green text-surface border border-wasabi-green/50 rounded-md hover:opacity-90 flex items-center justify-center shadow-sm">
-            <span class="material-symbols-outlined text-[18px] pointer-events-none">cloud_upload</span>
+      <div class="md:hidden flex flex-col z-30 shrink-0">
+        <!-- ALERTA DE CAMBIOS PENDIENTES (Móvil) -->
+        <div id="pending-changes-banner" class="hidden bg-[#f59e0b]/20 border-b border-[#f59e0b]/50 text-[#f59e0b] px-4 py-2 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-sm">notification_important</span>
+          <span class="font-label-bold text-[10px] leading-tight text-center">Tienes cambios sin publicar. Los clientes ven la versión anterior.</span>
+        </div>
+
+        <!-- BARRA SUPERIOR LIMPIA -->
+        <div class="flex justify-between items-center px-4 py-3 bg-surface-container border-b border-primary/20">
+          <div class="flex items-center gap-3">
+            <button onclick="document.getElementById('mobile-menu-overlay').classList.toggle('hidden')" class="p-1.5 text-primary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center">
+              <span class="material-symbols-outlined pointer-events-none">menu</span>
+            </button>
+            <h1 class="font-headline-lg-mobile text-primary uppercase text-sm">Gestor</h1>
+          </div>
+          
+          <button id="mobile-publish-btn" class="px-3 py-1.5 bg-wasabi-green text-surface font-label-bold text-xs rounded-md shadow-sm flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px] pointer-events-none">cloud_upload</span> Publicar
           </button>
-          <a href="index.html" target="_blank" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">storefront</span>
-          </a>
-          <button id="mobile-promo-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center"><span class="material-symbols-outlined text-[18px] pointer-events-none">campaign</span></button>
-          <button id="mobile-qr-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center"><span class="material-symbols-outlined text-[18px] pointer-events-none">qr_code_2</span></button>
-          <button onclick="document.getElementById('nav-emp-btn').click()" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[18px] pointer-events-none">manage_accounts</span></button>
-          <button id="mobile-new-btn" class="p-1.5 bg-primary-container/20 text-primary border border-primary/50 rounded-md hover:bg-primary-container/30 flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[18px] pointer-events-none">add</span></button>
-          <button id="mobile-logout-btn" class="p-1.5 bg-error/10 text-error border border-error/50 rounded-md hover:bg-error/20 flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[18px] pointer-events-none">logout</span></button>
+        </div>
+      </div>
+
+      <!-- MENÚ DESPLEGABLE MÓVIL (Oculto por defecto) -->
+      <div id="mobile-menu-overlay" class="hidden md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex justify-start" onclick="if(event.target === this) this.classList.add('hidden')">
+        <div class="w-64 bg-surface-container-high h-full shadow-2xl border-r border-primary/30 flex flex-col animate-slide-in-left">
+          <div class="p-4 border-b border-primary/20 flex justify-between items-center bg-surface">
+            <h2 class="font-headline-lg-mobile text-primary text-base uppercase">Opciones</h2>
+            <button onclick="document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="text-secondary">
+              <span class="material-symbols-outlined pointer-events-none">close</span>
+            </button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+            
+            <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-2">Catálogo</div>
+            <button id="mobile-new-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">add_circle</span><span class="font-label-bold text-sm">Nuevo Plato</span>
+            </button>
+            <button onclick="document.getElementById('nav-cat-btn').click(); document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">folder_managed</span><span class="font-label-bold text-sm">Categorías</span>
+            </button>
+
+            <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-4">Marketing</div>
+            <button id="mobile-promo-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">campaign</span><span class="font-label-bold text-sm">Banner Promo</span>
+            </button>
+            <button id="mobile-qr-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">qr_code_2</span><span class="font-label-bold text-sm">Generador QR</span>
+            </button>
+
+            <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-4">Sistema</div>
+            <button onclick="document.getElementById('nav-emp-btn').click(); document.getElementById('mobile-menu-overlay').classList.add('hidden')" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">manage_accounts</span><span class="font-label-bold text-sm">Personal</span>
+            </button>
+            <a href="index.html" target="_blank" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">storefront</span><span class="font-label-bold text-sm">Ver Carta</span>
+            </a>
+            
+          </div>
+          <div class="p-4 border-t border-primary/20 bg-surface mt-auto">
+            <button id="mobile-logout-btn" class="w-full flex items-center px-4 py-3 bg-error/10 rounded-lg border border-error/30 text-error justify-center">
+              <span class="material-symbols-outlined mr-2 text-lg">logout</span><span class="font-label-bold text-sm">Cerrar Sesión</span>
+            </button>
+          </div>
         </div>
       </div>
 
