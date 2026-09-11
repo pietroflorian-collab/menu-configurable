@@ -4,9 +4,7 @@ export const UI = {
   generarTarjetaPlato(item, rol, currentSelection = []) {
     const isPausado = String(item.es_pausado).toLowerCase() === "true";
     
-    let rawUrl = item.imagen_url || '';
-    // Intercepción arquitectónica: Fuerza la carga de imágenes por Cloudflare CDN
-    rawUrl = rawUrl.replace('https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main', 'https://recursos-sukidesu.pages.dev');
+    rawUrl = rawUrl.replace('[https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/assets/img](https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/assets/img)', '[https://recursos-sukidesu.pages.dev](https://recursos-sukidesu.pages.dev)');
     
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
     const isPicante = String(item.es_picante).toLowerCase() === "true";
