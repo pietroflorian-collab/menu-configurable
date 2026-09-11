@@ -155,4 +155,19 @@ const SukidesuMenu = {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => SukidesuMenu.init());
+document.addEventListener("DOMContentLoaded", () => {
+  SukidesuMenu.init();
+  
+  // Registro del Service Worker para Estrategia de Caché
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('ServiceWorker registrado con éxito bajo el alcance: ', registration.scope);
+        })
+        .catch((error) => {
+          console.error('Fallo en el registro del ServiceWorker: ', error);
+        });
+    });
+  }
+});
