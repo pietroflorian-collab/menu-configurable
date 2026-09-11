@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sukidesu-v5';
+const CACHE_NAME = 'sukidesu-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -43,15 +43,19 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(event.request);
+      
+      const networkFetch = fetch(event.request).then((networkResponse) => {
+        // Almacena en caché la respuesta válida, permitiendo guardar por primera vez las imágenes de Cloudflare
+        if (networkResponse && networkResponse.status === 200) {
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse.clone()));
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Mantiene la resiliencia si no hay conexión
+      });
+
+      // Retorna instantáneamente la versión de caché si existe, de lo contrario espera la respuesta de red
+      return cachedResponse || networkFetch;
     })
   );
 });

@@ -3,8 +3,9 @@ import { escapeHTML, formatPrice } from './api.js';
 export const UI = {
   generarTarjetaPlato(item, rol, currentSelection = []) {
     const isPausado = String(item.es_pausado).toLowerCase() === "true";
-    
-    rawUrl = rawUrl.replace('[https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/assets/img](https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main/assets/img)', '[https://recursos-sukidesu.pages.dev](https://recursos-sukidesu.pages.dev)');
+    let rawUrl = item.imagen_url || '';
+    // Intercepción arquitectónica: Fuerza la carga de imágenes por Cloudflare CDN
+    rawUrl = rawUrl.replace('https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main', 'https://recursos-sukidesu.pages.dev');
     
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
     const isPicante = String(item.es_picante).toLowerCase() === "true";
@@ -15,8 +16,19 @@ export const UI = {
     const categoriaTag = `<div class="bg-black/70 px-3 py-1 rounded-full border border-primary/50 w-fit backdrop-blur-sm shadow-md"><span class="font-label-bold text-[10px] text-tertiary tracking-wide uppercase">${escapeHTML(item.categoria || 'Entradas')}</span></div>`;
     const promoTag = hasPromoText ? `<div class="absolute top-3 right-3 bg-primary text-sushi-white font-label-bold text-[10px] px-2.5 py-1 rounded shadow-lg transform rotate-3 border border-sushi-white/20 w-fit text-center leading-tight z-20 pointer-events-none">${escapeHTML(item.texto_promo)}</div>` : '';
     const picanteTag = isPicante ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` : '';
-    const imgTag = optimizedImgUrl ? `<img src="${escapeHTML(optimizedImgUrl)}" alt="${escapeHTML(item.nombre)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` : `<span class="font-label-bold text-on-surface-variant z-0">Sin imagen</span>`;
+    // Código ajustado con Resiliencia Visual:
+// Se añade el evento onerror para forzar un fallback si la URL de Cloudflare falla
+const fallbackImgUrl = './assets/placeholder.png'; // Asegúrate de tener una imagen de logo genérica en esta ruta
 
+const imgTag = optimizedImgUrl 
+  ? `<img 
+      src="${escapeHTML(optimizedImgUrl)}" 
+      alt="${escapeHTML(item.nombre)}" 
+      loading="lazy" 
+      onerror="this.onerror=null;this.src='${fallbackImgUrl}';this.classList.remove('object-cover', 'group-hover:scale-105');this.classList.add('object-contain', 'p-8', 'opacity-50');"
+      class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+    />` 
+  : `<span class="font-label-bold text-on-surface-variant z-0">Sin imagen</span>`;
     if (rol === 'preview') {
       return `
         <div class="flex flex-col w-full max-w-[280px] my-auto mx-auto bg-[#121212] rounded-xl border border-primary-container/20 overflow-hidden relative shadow-lg">

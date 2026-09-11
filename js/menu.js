@@ -22,7 +22,6 @@ const SukidesuMenu = {
   async init() {
     this.bindEvents();
     try {
-      // CORRECCIÓN: Se elimina el 'true' para forzar la lectura desde GitHub y no saturar Firebase
       const data = await MenuAPI.fetchItems(); 
       this.config = data.config || {};
       
@@ -32,14 +31,44 @@ const SukidesuMenu = {
         return; 
       }
 
-      this.allItems = data.items || []; this.categoriesList = data.categories || [];
+      this.allItems = data.items || []; 
+      this.categoriesList = data.categories || [];
       localStorage.setItem('sukidesu_client_cache', JSON.stringify(data));
-    } catch (e) { this.allItems = []; this.categoriesList = []; this.config = {}; }
+    } catch (e) { 
+      // MANEJO DE ERROR DE RED
+      document.getElementById("loading-spinner")?.classList.add("hidden");
+      const grid = document.getElementById("menu-grid");
+      if (grid) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 px-4 bg-surface-container rounded-xl border border-dashed border-error/50 my-4 flex flex-col items-center">
+            <span class="material-symbols-outlined text-error text-5xl mb-3">wifi_off</span>
+            <h3 class="font-headline-lg-mobile text-lg text-on-surface">Problemas de conexión</h3>
+            <p class="font-body-md text-sm text-secondary mt-1 mb-4">No pudimos cargar el menú desde el servidor. Revisa tu señal de internet.</p>
+            <button id="btn-retry-fetch" class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+              <span class="material-symbols-outlined">refresh</span> Reintentar
+            </button>
+          </div>
+        `;
+        grid.classList.remove("hidden");
+        
+        // Atar el botón a un nuevo intento limpio
+        document.getElementById("btn-retry-fetch")?.addEventListener("click", () => {
+          grid.innerHTML = ""; 
+          grid.classList.add("hidden");
+          document.getElementById("loading-spinner")?.classList.remove("hidden");
+          this.init(); 
+        }, { once: true });
+      }
+      return; // Crucial: detener la ejecución para no renderizar la UI vacía
+    }
     
-    document.getElementById("loading-spinner")?.classList.add("hidden"); document.getElementById("menu-grid")?.classList.remove("hidden");
-    this.setupCategoryFilter(); this.renderMenu(); this.updateUI(); this.mostrarPromoFrontal(this.config);
+    document.getElementById("loading-spinner")?.classList.add("hidden"); 
+    document.getElementById("menu-grid")?.classList.remove("hidden");
+    this.setupCategoryFilter(); 
+    this.renderMenu(); 
+    this.updateUI(); 
+    this.mostrarPromoFrontal(this.config);
     
-    // Inicia el motor de sincronización silenciosa
     this.iniciarSincronizacionEnVivo();
   },
 
