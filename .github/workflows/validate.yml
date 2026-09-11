@@ -21,6 +21,6 @@ jobs:
       - name: Verificar archivos esenciales de PWA
         run: |
           test -f sw.js || (echo "Falta sw.js" && exit 1)
-          test -f icon-192x192.png || (echo "Falta icono 192" && exit 1)
-          test -f icon-512x512.png || (echo "Falta icono 512" && exit 1)
+          test -f images/icon-192x192.png || (echo "Falta icono 192" && exit 1)
+          test -f images/icon-512x512.png || (echo "Falta icono 512" && exit 1)
           echo "Archivos PWA verificados con éxito."
