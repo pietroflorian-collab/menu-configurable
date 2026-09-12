@@ -100,6 +100,8 @@ const SukidesuAdmin = {
   customQRLogo: null, 
   cropperInstance: null, 
   pendingImageBase64: null, 
+  pendingPromoImageBase64: null, 
+  cropTarget: 'item', 
   pendingConfirmAction: null,
 
   init() { 
@@ -111,11 +113,9 @@ const SukidesuAdmin = {
   bindEvents() {
     const bindClick = (id, fn) => document.getElementById(id)?.addEventListener('click', fn);
     
-    // Disparadores de Publicación
     bindClick("nav-publish-btn", () => this.handlePublishMenu());
     bindClick("mobile-publish-btn", () => this.handlePublishMenu());
 
-    // Botones de Navegación (PC)
     bindClick("nav-promo-btn", () => this.openPromoModal()); 
     bindClick("nav-qr-btn", () => this.openQRModal()); 
     bindClick("nav-add-btn", () => this.openModal());
@@ -123,7 +123,6 @@ const SukidesuAdmin = {
     bindClick("nav-emp-btn", () => this.openEmployeeModal()); 
     bindClick("nav-logout-btn", () => AuthManager.logout()); 
     
-    // Espejo Móvil (Cierra el panel lateral y ejecuta la acción)
     const closeMobileMenu = () => document.getElementById('mobile-menu-overlay')?.classList.add('hidden');
     bindClick("mobile-new-btn", () => { closeMobileMenu(); this.openModal(); });
     bindClick("mobile-cat-btn", () => { closeMobileMenu(); this.openCategoryModal(); });
@@ -155,7 +154,9 @@ const SukidesuAdmin = {
     document.getElementById("qr-input-url")?.addEventListener('input', () => this.renderAdminQR());
     document.getElementById("qr-input-file")?.addEventListener('change', (e) => this.handleQRImageUpload(e));
     document.getElementById("qr-input-texto")?.addEventListener('input', () => this.renderAdminQR());
-    document.getElementById("item-file-input")?.addEventListener('change', (e) => this.handleItemFileUpload(e));
+    
+    document.getElementById("item-file-input")?.addEventListener('change', (e) => this.handleImageUpload(e, 'item'));
+    document.getElementById("config-promo-file")?.addEventListener('change', (e) => this.handleImageUpload(e, 'promo'));
     
     ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion', 'item-promo-texto'].forEach(id => { 
       document.getElementById(id)?.addEventListener('input', () => this.updateModalPreview()); 
@@ -381,9 +382,11 @@ const SukidesuAdmin = {
     });
   },
 
-  handleItemFileUpload(event) {
+  handleImageUpload(event, target) {
     const file = event.target.files[0]; 
     if (!file) return; 
+    
+    this.cropTarget = target; 
     const reader = new FileReader();
     
     reader.onload = (e) => { 
@@ -391,14 +394,14 @@ const SukidesuAdmin = {
       imgElement.src = e.target.result; 
       this.openModalHelper("cropperModal");
       
-      if (this.cropperInstance) { 
-        this.cropperInstance.destroy(); 
-      }
+      if (this.cropperInstance) this.cropperInstance.destroy(); 
+      
+      const ratio = this.cropTarget === 'promo' ? (512 / 192) : (3 / 4);
       
       setTimeout(() => { 
         imgElement.classList.remove("opacity-0"); 
         this.cropperInstance = new Cropper(imgElement, { 
-          aspectRatio: 3 / 4, 
+          aspectRatio: ratio, 
           viewMode: 1, 
           autoCropArea: 0.9, 
           dragMode: 'move', 
@@ -413,30 +416,42 @@ const SukidesuAdmin = {
   cancelCrop() { 
     this.closeModalHelper("cropperModal"); 
     document.getElementById('item-file-input').value = ""; 
+    document.getElementById('config-promo-file').value = ""; 
     document.getElementById('cropper-image').classList.add("opacity-0"); 
   },
   
   confirmCrop() {
     if (!this.cropperInstance) return; 
     
-    const canvas = this.cropperInstance.getCroppedCanvas({ width: 600, height: 800 }); 
-    const base64Url = canvas.toDataURL('image/webp', 0.8);
+    const cropWidth = this.cropTarget === 'promo' ? 512 : 600;
+    const cropHeight = this.cropTarget === 'promo' ? 192 : 800;
     
-    this.pendingImageBase64 = base64Url.split(',')[1]; 
-    document.getElementById("item-imagen-url").value = base64Url; 
-    this.updateModalPreview(); 
+    const canvas = this.cropperInstance.getCroppedCanvas({ width: cropWidth, height: cropHeight }); 
+    const base64Url = canvas.toDataURL('image/webp', 0.8);
+    const base64Data = base64Url.split(',')[1];
+    
+    if (this.cropTarget === 'promo') {
+      this.pendingPromoImageBase64 = base64Data;
+      document.getElementById("config-promo-img").value = base64Url; 
+      this.updatePromoPreview(); 
+    } else {
+      this.pendingImageBase64 = base64Data;
+      document.getElementById("item-imagen-url").value = base64Url; 
+      this.updateModalPreview(); 
+    }
+
     this.closeModalHelper("cropperModal"); 
     document.getElementById('cropper-image').classList.add("opacity-0");
   },
 
-  async uploadToGitHub() {
-    if (!this.pendingImageBase64) return document.getElementById("item-imagen-url").value;
+  async uploadToGitHub(base64Data, isPromo = false) {
+    if (!base64Data) return null;
     
     const secretSnap = await getDoc(doc(db, "sistema", "secretos")); 
     if (!secretSnap.exists()) throw new Error("Token no encontrado.");
     
     const token = secretSnap.data().token_github; 
-    const nombreArchivo = `plato_${Date.now()}.webp`; 
+    const nombreArchivo = isPromo ? `promo_${Date.now()}.webp` : `plato_${Date.now()}.webp`; 
     const repoPath = `sukidesumenu-svg/image_sukidesu`;
     const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/assets/img/${nombreArchivo}`;
     
@@ -444,22 +459,24 @@ const SukidesuAdmin = {
       method: 'PUT', 
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, 
       body: JSON.stringify({ 
-        message: `Upload imagen de plato: ${nombreArchivo}`, 
-        content: this.pendingImageBase64, 
+        message: `Upload imagen: ${nombreArchivo}`, 
+        content: base64Data, 
         branch: "main" 
       }) 
     });
     
     if (!res.ok) { 
       const errorData = await res.json(); 
-      throw new Error(`Fallo en GitHub API: ${errorData.message}`); 
+      throw new Error(`Fallo API GitHub: ${errorData.message}`); 
     }
     
-    this.pendingImageBase64 = null; 
     return `https://recursos-sukidesu.pages.dev/assets/img/${nombreArchivo}`;
   },
 
   openPromoModal() {
+    document.getElementById("config-promo-file").value = "";
+    this.pendingPromoImageBase64 = null;
+    
     document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true"; 
     document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "";
     document.getElementById("config-promo-img").value = this.adminConfig.promo_imagen || ""; 
@@ -484,19 +501,27 @@ const SukidesuAdmin = {
   
   async savePromoConfig() {
     const btn = document.getElementById("promo-save-btn"); 
-    btn.innerText = "Guardando..."; 
+    btn.innerText = "Procesando..."; 
     btn.disabled = true;
     
-    const payload = { 
-      promo_activa: document.getElementById("config-promo-activa").checked.toString(), 
-      promo_texto: document.getElementById("config-promo-texto").value, 
-      promo_imagen: document.getElementById("config-promo-img").value 
-    };
-    
-    try { 
+    try {
+      let finalImageUrl = document.getElementById("config-promo-img").value;
+      
+      if (this.pendingPromoImageBase64) {
+        btn.innerText = "Subiendo imagen..."; 
+        finalImageUrl = await this.uploadToGitHub(this.pendingPromoImageBase64, true);
+      }
+
+      btn.innerText = "Guardando datos..."; 
+      const payload = { 
+        promo_activa: document.getElementById("config-promo-activa").checked.toString(), 
+        promo_texto: document.getElementById("config-promo-texto").value, 
+        promo_imagen: finalImageUrl 
+      };
+      
       const res = await MenuAPI.updateConfig(payload); 
       if(res && res.status === "success") { 
-        showToast("Configuración guardada", "success"); 
+        showToast("Anuncio guardado", "success"); 
         document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         this.adminConfig = payload; 
         this.closeModalHelper("promoConfigModal"); 
@@ -783,7 +808,6 @@ const SukidesuAdmin = {
       try { 
         const item = this.adminItems.find(i => i.id == id);
         
-        // CORRECCIÓN: Detecta tanto las URLs viejas de GitHub como las nuevas de Cloudflare
         const esImagenValida = item && item.imagen_url && (item.imagen_url.includes('githubusercontent') || item.imagen_url.includes('recursos-sukidesu.pages.dev'));
         
         if (esImagenValida) {
@@ -836,7 +860,6 @@ const SukidesuAdmin = {
       const nombreInput = document.getElementById("item-nombre").value.trim();
       const itemId = document.getElementById("item-id").value;
 
-      // Validación de duplicados apuntando a this.adminItems
       const esDuplicado = this.adminItems.some(item => 
         item.nombre.toLowerCase() === nombreInput.toLowerCase() && item.id !== itemId
       );
@@ -847,8 +870,13 @@ const SukidesuAdmin = {
         return; 
       }
 
-      btn.innerText = "Subiendo imagen..."; 
-      const finalImageUrl = await this.uploadToGitHub(); 
+      let finalImageUrl = document.getElementById("item-imagen-url").value;
+      
+      if (this.pendingImageBase64) {
+        btn.innerText = "Subiendo imagen..."; 
+        finalImageUrl = await this.uploadToGitHub(this.pendingImageBase64, false); 
+      }
+      
       btn.innerText = "Guardando datos...";
       
       const payload = {

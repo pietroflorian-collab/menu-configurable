@@ -336,8 +336,9 @@
               <textarea id="config-promo-texto" rows="2" class="w-full bg-surface border border-primary/40 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary resize-none shadow-inner" placeholder="Escribe tu promoción aquí..."></textarea>
             </div>
             <div class="flex flex-col gap-1">
-              <label class="text-[10px] text-primary font-bold uppercase ml-1">Enlace de la Imagen</label>
-              <input id="config-promo-img" type="text" class="w-full bg-surface border border-primary/40 rounded-lg px-3 py-2 text-secondary text-sm focus:border-primary shadow-inner" placeholder="Escribe: images/niguiripro.webp"/>
+              <label class="text-[10px] text-primary font-bold uppercase ml-1">Imagen del Anuncio (JPG/PNG/WEBP)</label>
+              <input id="config-promo-file" type="file" accept="image/jpeg, image/png, image/webp" class="w-full bg-surface border border-primary/40 rounded-lg px-2 py-1 text-secondary text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-primary-container file:text-sushi-white hover:file:bg-primary transition-colors cursor-pointer"/>
+              <input id="config-promo-img" type="hidden" />
             </div>
           </div>
           <div class="flex flex-col items-center justify-center bg-surface-container-lowest p-0 rounded-xl border border-dashed border-primary/30 relative overflow-hidden mt-1">
