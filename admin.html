@@ -23,13 +23,18 @@
   <link rel="apple-touch-icon" href="images/screen.png">
   
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
-    ::-webkit-scrollbar-thumb { background: theme('colors.surface-bright'); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
-    .scroll-container { cursor: grab; user-select: none; }
-    .scroll-container:active { cursor: grabbing; }
-  </style>
+  body {
+    background-color: #131313; 
+    background-image: url('images/fondo-ondas.png');
+    background-repeat: repeat;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
+  ::-webkit-scrollbar-thumb { background: theme('colors.surface-bright'); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
+  .scroll-container { cursor: grab; user-select: none; }
+  .scroll-container:active { cursor: grabbing; }
+</style>
 </head>
 
 <body class="flex min-h-[100dvh] md:h-screen overflow-x-hidden md:overflow-hidden font-body-md text-sm relative bg-surface text-on-surface overscroll-y-auto">
