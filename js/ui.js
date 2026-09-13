@@ -122,12 +122,12 @@ const imgTag = optimizedImgUrl
         </div>
         <div class="p-4 flex flex-col flex-grow bg-[#121212]">
           <div class="flex items-start justify-between gap-3 mb-2">
-            <h3 class="font-headline-lg-mobile text-xl text-primary leading-tight">${escapeHTML(item.nombre)}</h3>
+            <h3 class="font-ig font-semibold text-[15px] text-primary leading-tight">${escapeHTML(item.nombre)}</h3>
             <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0">
               ${precioFormatted}
             </div>
           </div>
-          <p data-expandable="true" class="font-body-md text-on-surface-variant text-sm mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200 mt-2" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
+          <p data-expandable="true" class="font-ig text-on-surface-variant text-[14px] leading-snug mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200 mt-2" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
           <div class="mt-3 flex gap-2 empty:hidden">${picanteTag}</div>
           ${mobileActionContainer}
         </div>
