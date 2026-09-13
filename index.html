@@ -117,12 +117,7 @@
     </div>
   </div>
 
- <footer class="bg-surface-container-lowest text-tertiary font-body-md text-body-md mt-auto border-t border-outline-variant/20">
-    <div class="flex flex-col md:flex-row justify-between items-center px-5 md:px-12 py-4 max-w-7xl mx-auto min-h-[80px]">
-      <div class="font-headline-lg text-primary mb-4 md:mb-0">SUKIDESU SUSHI</div>
-      <div class="text-sm text-secondary">© 2026 SUKIDESU SUSHI. Todos los Derechos Reservados.</div>
-    </div>
-  </footer>
+<div id="footer-container"></div>
 
   <div id="clientePromoModal" class="fixed inset-0 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" style="z-index: 9999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);">
     <div class="w-full bg-[#0a0a0a] rounded-xl shadow-2xl border border-[#ffb3ac]/50 flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative" style="max-width: 512px; aspect-ratio: 512/192;" id="clientePromoContent">
@@ -151,5 +146,13 @@
       }
     });
   </script>
+
+   <!-- Declaracion Legal -->
+
+<script type="module">
+    import { footerHTML } from './js/configFooter.js';
+    document.getElementById('footer-container').innerHTML = footerHTML;
+</script>
+</script>
 </body>
 </html>
