@@ -1,95 +1,9 @@
-import { auth, db, MenuAPI, escapeHTML, showToast } from './api.js';
+import { db, MenuAPI, escapeHTML, showToast } from './api.js';
 import { UI } from './ui.js';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-import { initializeApp, getApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-
-const AuthManager = {
-  currentUser: null, 
-  userRole: null,
-
-  init() {
-    onAuthStateChanged(auth, async (user) => {
-      const loginOverlay = document.getElementById('login-overlay');
-      const adminLayout = document.getElementById('admin-layout');
-      
-      if (user) {
-        this.currentUser = user;
-        try {
-          const userDocRef = doc(db, 'usuarios', user.uid);
-          const userSnap = await getDoc(userDocRef);
-          this.userRole = userSnap.exists() ? userSnap.data().rol : (user.uid === '6pgUHNjYxXOBd7GtYuChQEdg6tm2' ? 'superadmin' : null);
-          
-          if (this.userRole) { 
-            loginOverlay.classList.add('hidden'); 
-            if (adminLayout) adminLayout.classList.remove('hidden'); 
-            SukidesuAdmin.init(); 
-          } else { 
-            throw new Error("Usuario sin roles asignados o revocado."); 
-          }
-        } catch (error) { 
-          console.error(error); 
-          showToast("Acceso denegado. Perfil revocado.", "error"); 
-          this.logout(); 
-        }
-      } else { 
-        loginOverlay.classList.remove('hidden'); 
-        if (adminLayout) adminLayout.classList.add('hidden'); 
-      }
-    });
-    
-    document.getElementById('login-form')?.addEventListener('submit', (e) => this.login(e));
-  },
-
-  async login(e) {
-    e.preventDefault(); 
-    const email = document.getElementById('login-email').value.trim(); 
-    const pass = document.getElementById('login-pass').value.trim();
-    const btn = document.getElementById('login-btn'); 
-    
-    btn.innerText = "Verificando..."; 
-    btn.disabled = true;
-    
-    try { 
-      await signInWithEmailAndPassword(auth, email, pass); 
-    } catch (error) { 
-      showToast("Credenciales inválidas", "error"); 
-    } finally { 
-      btn.innerText = "Ingresar"; 
-      btn.disabled = false; 
-    }
-  },
-
-  logout() { 
-    signOut(auth).then(() => { 
-      window.location.reload(); 
-    }).catch((error) => { 
-      console.error("Error al cerrar sesión", error); 
-    }); 
-  },
-
-  async registrarEmpleado(email, pass, rolAsignado) {
-    if (this.userRole === 'editor' || (this.userRole === 'administrador' && rolAsignado !== 'editor')) { 
-      showToast("No tienes privilegios para crear este perfil", "error"); 
-      return false; 
-    }
-    
-    const secondaryApp = initializeApp(getApp().options, "WorkerApp"); 
-    const secondaryAuth = getAuth(secondaryApp);
-    
-    try {
-      const res = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-      await setDoc(doc(db, 'usuarios', res.user.uid), { rol: rolAsignado, email: email });
-      showToast(`Perfil (${rolAsignado}) creado con éxito`, "success"); 
-      return true;
-    } catch (error) { 
-      showToast(`Error al crear empleado: ${error.message}`, "error"); 
-      return false; 
-    } finally { 
-      await deleteApp(secondaryApp); 
-    }
-  }
-};
+import { AuthManager } from './auth.js';
+import { QRGenerator } from './qr.js';
+import { ImageUploader } from './image-uploader.js';
+import { doc, getDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 const SukidesuAdmin = {
   adminItems: [], 
@@ -97,15 +11,11 @@ const SukidesuAdmin = {
   adminConfig: {}, 
   selectedCategory: "", 
   searchQuery: "", 
-  customQRLogo: null, 
-  cropperInstance: null, 
-  pendingImageBase64: null, 
-  pendingPromoImageBase64: null, 
-  cropTarget: 'item', 
   pendingConfirmAction: null,
 
   init() { 
     this.bindEvents(); 
+    ImageUploader.init();
     this.loadAdminData(); 
     this.enableDragScroll("admin-category-bar"); 
   },
@@ -132,31 +42,28 @@ const SukidesuAdmin = {
     bindClick("mobile-logout-btn", () => AuthManager.logout());
     
     bindClick("close-promo-btn", () => this.closeModalHelper("promoConfigModal")); 
-    bindClick("close-qr-btn", () => this.closeModalHelper("qrModal"));
     bindClick("close-cat-btn", () => this.closeModalHelper("categoryModal")); 
     bindClick("close-item-btn", () => this.closeModalHelper("itemModal"));
     bindClick("cancel-item-btn", () => this.closeModalHelper("itemModal")); 
     bindClick("close-emp-btn", () => this.closeModalHelper("employeeModal"));
-    bindClick("close-cropper-btn", () => this.cancelCrop()); 
-    bindClick("cancel-cropper-btn", () => this.cancelCrop());
+    bindClick("close-qr-btn", () => this.closeModalHelper("qrModal"));
     bindClick("cancel-confirm-btn", () => this.closeConfirmDialog()); 
     bindClick("execute-confirm-btn", () => this.executeConfirmAction());
     
     bindClick("promo-save-btn", () => this.savePromoConfig()); 
-    bindClick("qr-download-btn", () => this.downloadAdminQR()); 
-    bindClick("confirm-crop-btn", () => this.confirmCrop());
+    
+    // Conexión del botón de recorte al módulo de imágenes pasando los callbacks de vista previa
+    bindClick("confirm-crop-btn", () => {
+      ImageUploader.confirmCrop(
+        () => this.updateModalPreview(), 
+        () => this.updatePromoPreview()
+      );
+    });
     
     document.getElementById("admin-search-input")?.addEventListener('input', (e) => this.handleSearch(e.target.value));
     document.getElementById("itemForm")?.addEventListener('submit', (e) => this.handleFormSubmit(e));
     document.getElementById("catForm")?.addEventListener('submit', (e) => this.handleCreateCategorySubmit(e));
     document.getElementById("empForm")?.addEventListener('submit', (e) => this.handleEmpSubmit(e));
-    
-    document.getElementById("qr-input-url")?.addEventListener('input', () => this.renderAdminQR());
-    document.getElementById("qr-input-file")?.addEventListener('change', (e) => this.handleQRImageUpload(e));
-    document.getElementById("qr-input-texto")?.addEventListener('input', () => this.renderAdminQR());
-    
-    document.getElementById("item-file-input")?.addEventListener('change', (e) => this.handleImageUpload(e, 'item'));
-    document.getElementById("config-promo-file")?.addEventListener('change', (e) => this.handleImageUpload(e, 'promo'));
     
     ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion', 'item-promo-texto'].forEach(id => { 
       document.getElementById(id)?.addEventListener('input', () => this.updateModalPreview()); 
@@ -382,100 +289,9 @@ const SukidesuAdmin = {
     });
   },
 
-  handleImageUpload(event, target) {
-    const file = event.target.files[0]; 
-    if (!file) return; 
-    
-    this.cropTarget = target; 
-    const reader = new FileReader();
-    
-    reader.onload = (e) => { 
-      const imgElement = document.getElementById('cropper-image'); 
-      imgElement.src = e.target.result; 
-      this.openModalHelper("cropperModal");
-      
-      if (this.cropperInstance) this.cropperInstance.destroy(); 
-      
-      const ratio = this.cropTarget === 'promo' ? (512 / 192) : (3 / 4);
-      
-      setTimeout(() => { 
-        imgElement.classList.remove("opacity-0"); 
-        this.cropperInstance = new Cropper(imgElement, { 
-          aspectRatio: ratio, 
-          viewMode: 1, 
-          autoCropArea: 0.9, 
-          dragMode: 'move', 
-          background: false 
-        }); 
-      }, 100);
-    }; 
-    
-    reader.readAsDataURL(file);
-  },
-  
-  cancelCrop() { 
-    this.closeModalHelper("cropperModal"); 
-    document.getElementById('item-file-input').value = ""; 
-    document.getElementById('config-promo-file').value = ""; 
-    document.getElementById('cropper-image').classList.add("opacity-0"); 
-  },
-  
-  confirmCrop() {
-    if (!this.cropperInstance) return; 
-    
-    const cropWidth = this.cropTarget === 'promo' ? 512 : 600;
-    const cropHeight = this.cropTarget === 'promo' ? 192 : 800;
-    
-    const canvas = this.cropperInstance.getCroppedCanvas({ width: cropWidth, height: cropHeight }); 
-    const base64Url = canvas.toDataURL('image/webp', 0.8);
-    const base64Data = base64Url.split(',')[1];
-    
-    if (this.cropTarget === 'promo') {
-      this.pendingPromoImageBase64 = base64Data;
-      document.getElementById("config-promo-img").value = base64Url; 
-      this.updatePromoPreview(); 
-    } else {
-      this.pendingImageBase64 = base64Data;
-      document.getElementById("item-imagen-url").value = base64Url; 
-      this.updateModalPreview(); 
-    }
-
-    this.closeModalHelper("cropperModal"); 
-    document.getElementById('cropper-image').classList.add("opacity-0");
-  },
-
-  async uploadToGitHub(base64Data, isPromo = false) {
-    if (!base64Data) return null;
-    
-    const secretSnap = await getDoc(doc(db, "sistema", "secretos")); 
-    if (!secretSnap.exists()) throw new Error("Token no encontrado.");
-    
-    const token = secretSnap.data().token_github; 
-    const nombreArchivo = isPromo ? `promo_${Date.now()}.webp` : `plato_${Date.now()}.webp`; 
-    const repoPath = `sukidesumenu-svg/image_sukidesu`;
-    const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/assets/img/${nombreArchivo}`;
-    
-    const res = await fetch(githubApiUrl, { 
-      method: 'PUT', 
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ 
-        message: `Upload imagen: ${nombreArchivo}`, 
-        content: base64Data, 
-        branch: "main" 
-      }) 
-    });
-    
-    if (!res.ok) { 
-      const errorData = await res.json(); 
-      throw new Error(`Fallo API GitHub: ${errorData.message}`); 
-    }
-    
-    return `https://recursos-sukidesu.pages.dev/assets/img/${nombreArchivo}`;
-  },
-
   openPromoModal() {
     document.getElementById("config-promo-file").value = "";
-    this.pendingPromoImageBase64 = null;
+    ImageUploader.pendingPromoImageBase64 = null;
     
     document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true"; 
     document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "";
@@ -507,9 +323,9 @@ const SukidesuAdmin = {
     try {
       let finalImageUrl = document.getElementById("config-promo-img").value;
       
-      if (this.pendingPromoImageBase64) {
+      if (ImageUploader.pendingPromoImageBase64) {
         btn.innerText = "Subiendo imagen..."; 
-        finalImageUrl = await this.uploadToGitHub(this.pendingPromoImageBase64, true);
+        finalImageUrl = await ImageUploader.uploadToGitHub(ImageUploader.pendingPromoImageBase64, true);
       }
 
       btn.innerText = "Guardando datos..."; 
@@ -538,69 +354,8 @@ const SukidesuAdmin = {
 
   openQRModal() { 
     this.openModalHelper("qrModal"); 
-    this.renderAdminQR(); 
-  },
-  
-  handleQRImageUpload(event) { 
-    const file = event.target.files[0]; 
-    if (file) { 
-      const reader = new FileReader(); 
-      reader.onload = (e) => { 
-        const img = new Image(); 
-        img.onload = () => { 
-          this.customQRLogo = img; 
-          this.renderAdminQR(); 
-        }; 
-        img.src = e.target.result; 
-      }; 
-      reader.readAsDataURL(file); 
-    } 
-  },
-  
-  renderAdminQR() {
-    const canvas = document.getElementById('admin-qr-canvas'); 
-    if (!canvas) return; 
-    const ctx = canvas.getContext('2d');
-    
-    let baseUrl = document.getElementById('qr-input-url').value.trim() || "https://menusukidesu.sukidesumenu.workers.dev/"; 
-    if(baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1); 
-    
-    const textoQR = document.getElementById('qr-input-texto')?.value.trim() || 'MENÚ'; 
-    const hoy = new Date(); 
-    const tokenSecreto = hoy.getDate() + (hoy.getFullYear() * 76); 
-    const urlRastreo = `${baseUrl}/?mesa=${encodeURIComponent(textoQR.replace(/\s+/g, '_'))}&tk=${tokenSecreto}`;
-    
-    canvas.width = 292; 
-    canvas.height = 342; 
-    ctx.fillStyle = '#0a0a0a'; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height); 
-    ctx.fillStyle = '#FFFFFF'; 
-    ctx.fillRect(16, 16, 260, 260);
-    
-    if (typeof QRCode !== 'undefined') { 
-      QRCode.toDataURL(urlRastreo, { width: 260, margin: 0, errorCorrectionLevel: 'H', color: { dark: '#000000', light: '#FFFFFF' } }, (err, url) => { 
-        if (err) return; 
-        const qrImg = new Image(); 
-        qrImg.onload = () => { 
-          ctx.drawImage(qrImg, 16, 16); 
-          ctx.fillStyle = '#FFFFFF'; 
-          ctx.fillRect(106, 106, 80, 80); 
-          if (this.customQRLogo) ctx.drawImage(this.customQRLogo, 114, 114, 64, 64); 
-          ctx.fillStyle = '#FFFFFF'; 
-          ctx.font = 'bold 26px sans-serif'; 
-          ctx.textAlign = 'center'; 
-          ctx.fillText(textoQR.toUpperCase(), 146, 317); 
-        }; 
-        qrImg.src = url; 
-      }); 
-    }
-  },
-  
-  downloadAdminQR() { 
-    const link = document.createElement('a'); 
-    link.download = `QR_${(document.getElementById('qr-input-texto')?.value.trim() || 'QR').replace(/\s+/g, '_')}.png`; 
-    link.href = document.getElementById('admin-qr-canvas').toDataURL(); 
-    link.click(); 
+    QRGenerator.init();
+    QRGenerator.update();
   },
 
   populateCategorySelect() { 
@@ -770,7 +525,7 @@ const SukidesuAdmin = {
     document.getElementById("itemForm").reset(); 
     document.getElementById("item-id").value = item ? item.id : ""; 
     document.getElementById("item-file-input").value = ""; 
-    this.pendingImageBase64 = null; 
+    ImageUploader.pendingImageBase64 = null; 
     document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato"; 
     document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
     
@@ -872,9 +627,9 @@ const SukidesuAdmin = {
 
       let finalImageUrl = document.getElementById("item-imagen-url").value;
       
-      if (this.pendingImageBase64) {
+      if (ImageUploader.pendingImageBase64) {
         btn.innerText = "Subiendo imagen..."; 
-        finalImageUrl = await this.uploadToGitHub(this.pendingImageBase64, false); 
+        finalImageUrl = await ImageUploader.uploadToGitHub(ImageUploader.pendingImageBase64, false); 
       }
       
       btn.innerText = "Guardando datos...";
@@ -913,4 +668,4 @@ const SukidesuAdmin = {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => AuthManager.init());
+document.addEventListener("DOMContentLoaded", () => AuthManager.init(() => SukidesuAdmin.init()));

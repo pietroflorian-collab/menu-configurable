@@ -33,33 +33,26 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  // Ignora peticiones que no sean GET, servicios de Google, y panel de administración
-  if (
-    event.request.method !== 'GET' || 
-    event.request.url.includes('google') ||
-    event.request.url.includes('admin.html') ||
-    event.request.url.includes('manifest-admin.json') ||
-    event.request.url.includes('identitytoolkit')
-  ) {
-    return;
-  }
+event.respondWith(
+  caches.match(event.request).then((cachedResponse) => {
+    
+    const networkFetch = fetch(event.request).then((networkResponse) => {
+      // Almacena en caché la respuesta válida, permitiendo guardar por primera vez las imágenes de Cloudflare
+      if (networkResponse && networkResponse.status === 200) {
+        
+        // Clonación síncrona INMEDIATA para evitar que el navegador la consuma primero
+        const responseToCache = networkResponse.clone();
+        
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+      }
+      return networkResponse;
+    }).catch(() => {
+      // Mantiene la resiliencia si no hay conexión
+    });
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      
-      const networkFetch = fetch(event.request).then((networkResponse) => {
-        // Almacena en caché la respuesta válida, permitiendo guardar por primera vez las imágenes de Cloudflare
-        if (networkResponse && networkResponse.status === 200) {
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse.clone()));
-        }
-        return networkResponse;
-      }).catch(() => {
-        // Mantiene la resiliencia si no hay conexión
-      });
-
-      // Retorna instantáneamente la versión de caché si existe, de lo contrario espera la respuesta de red
-      return cachedResponse || networkFetch;
-    })
-  );
-});
+    // Retorna instantáneamente la versión de caché si existe, de lo contrario espera la respuesta de red
+    return cachedResponse || networkFetch;
+  })
+);

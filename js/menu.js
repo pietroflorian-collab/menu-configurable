@@ -123,17 +123,32 @@ const SukidesuMenu = {
     const today = rawToday.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     
     const filtered = this.allItems.filter(i => { 
+      // 1. Limpieza de categoría base
+      const cat = (i.categoria || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      
+      // 2. Extracción y limpieza de los días asignados en la base de datos
+      const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) : [];
+      
+      // 3. Validación tolerante: verifica si el día actual coincide con el día guardado
+      const isPromoToday = activeDays.some(d => d.startsWith(today) || today.startsWith(d));
+      
+      // DEPURACIÓN: Se ejecuta ANTES de los return para garantizar que se imprima
+      if (this.selectedCategory === "Combos y Promo" && activeDays.length > 0) {
+        console.log(`Plato: ${i.nombre} | Días crudos BD: "${i.dias_promo}" | Array limpio:`, activeDays, `| Hoy sistema: "${today}" | Coincidencia: ${isPromoToday}`);
+      }
+      
       if (this.selectedCategory === "Combos y Promo") { 
-        const cat = (i.categoria || "").toLowerCase().trim(); 
-        const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) : []; 
-        const isPromoToday = activeDays.includes(today); 
-        
+        // Se muestran todos los platos que sean estructuralmente un combo
         if (cat === "combos" || cat === "combo") return true;
-        if (cat === "promociones" || cat === "promos" || cat === "promo") return isPromoToday;
-        if (activeDays.length > 0) return isPromoToday;
         
+        // Se muestra cualquier plato (de cualquier categoría) si su día promocional coincide con hoy
+        if (isPromoToday) return true;
+        
+        // Si no es combo y no aplica para hoy, se oculta exclusivamente de esta vista combinada
         return false;
-      } 
+      }
+      
+      // Para el resto de las pestañas (Rollos, Entradas, Bebidas, etc.), los platos se muestran en su categoría nativa
       return i.categoria === this.selectedCategory; 
     });
     
