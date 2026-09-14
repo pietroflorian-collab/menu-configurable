@@ -6,52 +6,65 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>SUKIDESU SUSHI - Menú</title>
+  <title id="meta-title">Menú Digital</title>
+  
   <!-- Etiquetas Open Graph para Redes Sociales -->
-  <meta property="og:title" content="SUKIDESU SUSHI - Menú" />
-  <meta property="og:description" content="Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa." />
-  <meta property="og:image" content="https://recursos-sukidesu.pages.dev/3d-menu.png" />
-  <meta property="og:url" content="https://menusukidesu.sukidesumenu.workers.dev/" />
+  <meta id="og-title" property="og:title" content="Menú Digital" />
+  <meta id="og-desc" property="og:description" content="" />
+  <meta id="og-image" property="og:image" content="" />
+  <meta id="og-url" property="og:url" content="" />
   <meta property="og:type" content="website" />
   <meta property="og:image:width" content="1734" />
   <meta property="og:image:height" content="907" />
-  <meta property="og:image:alt" content="Mascota 3D de Sukidesu Sushi" />
+  
   <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=Plus+Jakarta+Sans:wght@400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="css/output.css?v=2.0" rel="stylesheet"/>
   
+  <!-- Importación Dinámica de Meta y Textos -->
+  <script type="module">
+    import { AppConfig } from './js/config.js';
+    
+    // Inyección de Textos y Meta Tags
+    document.getElementById('meta-title').innerText = `${AppConfig.cliente.nombre} - Menú`;
+    document.getElementById('og-title').content = `${AppConfig.cliente.nombre} - Menú`;
+    document.getElementById('og-desc').content = AppConfig.cliente.descripcionComercial;
+    document.getElementById('og-url').content = AppConfig.urls.produccion;
+    // Se estandariza la ruta del logo 3D o cover
+    document.getElementById('og-image').content = `${AppConfig.urls.produccion}images/logo-marca.png`;
+    
+    // Inyección UI
+    document.getElementById('brand-title').innerText = `${AppConfig.cliente.nombre} MENÚ`;
+    document.getElementById('brand-slogan').innerText = AppConfig.cliente.eslogan;
+    document.getElementById('brand-desc').innerText = AppConfig.cliente.descripcionComercial;
+  </script>
+
   <script type="module" src="js/api.js"></script>
   <script type="module" src="js/ui.js"></script>
   <script type="module" src="js/menu.js"></script>
 
-  <!-- Fondo Ondas -->
+  <!-- Refactorización: Fondo hereda variables de Tailwind, solo se asigna el patrón estandarizado -->
   <style>
     body {
-  background-color: #131313;
-  color: #e2e2e2;
-  background-image: url('images/fondo-ondas.png');
-  background-repeat: repeat;
-  }
-  
+      background-image: url('images/bg-layout.png');
+      background-repeat: repeat;
+    }
     button { border: none; outline: none; }
     .menu-card-img-wrapper { position: relative; overflow: hidden; width: 100%; aspect-ratio: 4/5; }
     @media (min-width: 640px) { .menu-card-img-wrapper { width: 40%; aspect-ratio: auto; min-height: 260px; } }
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
-    .glow-hover:hover { box-shadow: 0 0 15px rgba(183, 31, 34, 0.4); }
+    .glow-hover:hover { box-shadow: 0 0 15px var(--color-primary); }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: theme('colors.surface'); }
     ::-webkit-scrollbar-thumb { background: theme('colors.surface-container'); border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary-container'); }
-    .font-ig {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+    .font-ig { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   </style>
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col bg-surface text-on-surface relative">
   
-  <!-- INTERRUPTOR DE PAGO: PANTALLA DE MANTENIMIENTO -->
-  <div id="maintenance-overlay" class="fixed inset-0 bg-[#0a0a0a] z-[99999] flex-col items-center justify-center p-6 hidden">
+  <div id="maintenance-overlay" class="fixed inset-0 bg-surface-container-lowest z-[99999] flex-col items-center justify-center p-6 hidden">
     <div class="text-center max-w-md w-full bg-surface-container-low p-8 rounded-2xl border border-error/30 shadow-2xl">
       <div class="w-20 h-20 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-6">
         <span class="material-symbols-outlined text-5xl">construction</span>
@@ -63,7 +76,7 @@
 
   <nav class="bg-surface font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-40 sticky">
     <div class="flex justify-between items-center px-5 md:px-12 py-4 w-full max-w-7xl mx-auto">
-      <div class="font-headline-lg-mobile md:font-headline-lg text-primary uppercase tracking-tighter">SUKIDESU SUSHI MENÚ</div>
+      <div id="brand-title" class="font-headline-lg-mobile md:font-headline-lg text-primary uppercase tracking-tighter">MENÚ</div>
       <div class="flex items-center space-x-6"><a class="text-primary border-b-2 border-primary pb-1" href="#">Inicio</a></div>
     </div>
   </nav>
@@ -72,11 +85,12 @@
     <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
       <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
         <div class="flex-1 space-y-2">
-          <h1 class="font-headline-xl text-3xl md:text-[46px] text-primary leading-tight">¡QUÉ CHIMBA DE SUSHI!</h1>
-          <p class="font-body-md text-sm md:text-base text-on-surface max-w-lg">Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.</p>
+          <h1 id="brand-slogan" class="font-headline-xl text-3xl md:text-[46px] text-primary leading-tight"></h1>
+          <p id="brand-desc" class="font-body-md text-sm md:text-base text-on-surface max-w-lg"></p>
         </div>
         <div class="flex-1 flex justify-center items-center py-2 shrink-0">
-          <img alt="SUKIDESU Mascot" class="w-28 h-28 md:w-52 md:h-52 object-contain rebote-amplio" src="images/screen.png"/>
+          <!-- Refactorización: Ruta de mascota/logo estandarizada -->
+          <img alt="Mascota" class="w-28 h-28 md:w-52 md:h-52 object-contain rebote-amplio" src="images/logo-marca.png"/>
         </div>
       </div>
     </section>
@@ -117,23 +131,27 @@
     </div>
   </div>
 
-<div id="footer-container"></div>
+  <div id="footer-container"></div>
 
-  <div id="clientePromoModal" class="fixed inset-0 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" style="z-index: 9999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);">
-    <div class="w-full bg-[#0a0a0a] rounded-xl shadow-2xl border border-[#ffb3ac]/50 flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative" style="max-width: 512px; aspect-ratio: 512/192;" id="clientePromoContent">
-      <button id="close-cliente-promo" class="absolute top-2 right-2 z-30 bg-black/60 hover:bg-black text-[#ffb3b1] hover:text-white p-1 rounded-full backdrop-blur-sm transition-colors border border-[#ffb3ac]/30"><span class="material-symbols-outlined">close</span></button>
+  <!-- Refactorización: Clases Tailwind v4 para el Promo Modal -->
+  <div id="clientePromoModal" class="fixed inset-0 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300 z-[9999] bg-surface-container-lowest/85 backdrop-blur-md">
+    <div class="w-full bg-surface-container-low rounded-xl shadow-2xl border border-outline-variant flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative max-w-lg aspect-[512/192]" id="clientePromoContent">
+      <button id="close-cliente-promo" class="absolute top-2 right-2 z-30 bg-surface/60 hover:bg-surface text-secondary hover:text-on-surface p-1 rounded-full backdrop-blur-sm transition-colors border border-outline-variant/30"><span class="material-symbols-outlined">close</span></button>
       <img id="cliente-promo-img" src="" class="absolute inset-0 w-full h-full object-cover object-left z-0" />
       <div class="absolute inset-0 flex z-20 pointer-events-none">
         <div style="width: 45%;"></div>
-        <div class="flex flex-col justify-center items-end text-right p-3 sm:p-4" style="width: 55%;">
-          <div class="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-2"><span class="material-symbols-outlined text-[#ACC677] text-[14px] sm:text-base">campaign</span><h3 class="font-headline-lg-mobile text-[14px] sm:text-base text-[#ffb3ac] uppercase tracking-wide leading-none">¡Novedad!</h3></div>
-          <p id="cliente-promo-texto" class="font-body-md text-white text-[10px] sm:text-xs leading-tight mb-2 sm:mb-3 drop-shadow-md line-clamp-3"></p>
-          <button id="btn-entendido-promo" class="bg-[#b71f22] text-white px-3 sm:px-4 py-1.5 font-label-bold rounded-lg text-[10px] sm:text-[11px] shadow-lg pointer-events-auto hover:bg-[#ffb3ac] hover:text-[#131313] transition-colors">¡Ver el Menú!</button>
+        <div class="flex flex-col justify-center items-end text-right p-3 sm:p-4 w-[55%]">
+          <div class="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-2">
+            <span class="material-symbols-outlined text-wasabi-green text-[14px] sm:text-base">campaign</span>
+            <h3 class="font-headline-lg-mobile text-[14px] sm:text-base text-secondary-fixed uppercase tracking-wide leading-none">¡Novedad!</h3>
+          </div>
+          <p id="cliente-promo-texto" class="font-body-md text-sushi-white text-[10px] sm:text-xs leading-tight mb-2 sm:mb-3 drop-shadow-md line-clamp-3"></p>
+          <button id="btn-entendido-promo" class="bg-primary-container text-sushi-white px-3 sm:px-4 py-1.5 font-label-bold rounded-lg text-[10px] sm:text-[11px] shadow-lg pointer-events-auto hover:bg-secondary-fixed hover:text-surface-container-low transition-colors">¡Ver el Menú!</button>
         </div>
       </div>
     </div>
   </div>
-  <!-- Detector de sesión administrativa -->
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -147,12 +165,9 @@
     });
   </script>
 
-   <!-- Declaracion Legal -->
-
-<script type="module">
+  <script type="module">
     import { footerHTML } from './js/configFooter.js';
     document.getElementById('footer-container').innerHTML = footerHTML;
-</script>
-</script>
+  </script>
 </body>
 </html>

@@ -3,29 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad - Menu Sukidesu</title>
+    <title id="title-doc">Política de Privacidad</title>
 </head>
 <body>
     <h1>Política de Privacidad y Tratamiento de Datos Personales</h1>
-    <p>En cumplimiento de la Ley 1581 de 2012 (Ley de Habeas Data) y el Decreto 1377 de 2013, se establecen las siguientes políticas de privacidad para el uso del catálogo digital "Menu Sukidesu".</p>
+    <p>En cumplimiento de la Ley 1581 de 2012 (Ley de Habeas Data) y el Decreto 1377 de 2013, se establecen las siguientes políticas de privacidad para el uso del catálogo digital "<span id="brand-name-1"></span>".</p>
 
     <h2>1. Identificación del Responsable</h2>
     <ul>
-        <li><strong>Responsable:</strong> Lorena Sanchez Gonzalez</li>
-        <li><strong>Documento de Identificación (PPT):</strong> 2433271</li>
-        <li><strong>Domicilio:</strong> Cl. 28 # 66-10, San Gabriel, Itagüí, Antioquia</li>
-        <li><strong>Correo electrónico de contacto (PQR):</strong> sushisukidesu2025@gmail.com</li>
+        <li><strong>Responsable:</strong> <span id="legal-name"></span></li>
+        <li><strong>Documento de Identificación:</strong> <span id="legal-doc"></span></li>
+        <li><strong>Domicilio:</strong> <span id="legal-address"></span></li>
+        <li><strong>Correo electrónico de contacto (PQR):</strong> <span id="legal-email"></span></li>
     </ul>
 
     <h2>2. Declaración de No Recolección de Datos Personales</h2>
-    <p>El sitio web de Menu Sukidesu opera estrictamente como un catálogo digital informativo. Declaramos explícitamente que este sitio <strong>no solicita, no captura, no procesa y no almacena</strong> datos personales, nombres, correos electrónicos, números de teléfono ni datos financieros o de tarjetas de crédito de los usuarios.</p>
+    <p>El sitio web de <span id="brand-name-2"></span> opera estrictamente como un catálogo digital informativo. Declaramos explícitamente que este sitio <strong>no solicita, no captura, no procesa y no almacena</strong> datos personales, nombres, correos electrónicos, números de teléfono ni datos financieros o de tarjetas de crédito de los usuarios[cite: 4].</p>
 
     <h2>3. Uso de Tecnología de Almacenamiento Local (sessionStorage)</h2>
-    <p>Para garantizar una mejor experiencia de usuario y permitir el funcionamiento de la herramienta "Mi lista" (la cual sirve para calcular el total del pedido y facilitar la orden al mesero de forma presencial), este sitio utiliza <code>sessionStorage</code>. Esta tecnología guarda los productos seleccionados temporalmente en la memoria del navegador del usuario de forma totalmente anónima. Toda la información almacenada en el <code>sessionStorage</code> se elimina automáticamente en el momento en que el usuario cierra la pestaña o el navegador.</p>
+    <p>Para garantizar una mejor experiencia de usuario y permitir el funcionamiento de la herramienta "Mi lista" (la cual sirve para calcular el total del pedido y facilitar la orden al mesero de forma presencial), este sitio utiliza <code>sessionStorage</code>[cite: 4]. Esta tecnología guarda los productos seleccionados temporalmente en la memoria del navegador del usuario de forma totalmente anónima[cite: 4]. Toda la información almacenada en el <code>sessionStorage</code> se elimina automáticamente en el momento en que el usuario cierra la pestaña o el navegador[cite: 4].</p>
 
     <h2>4. Derechos de los Usuarios</h2>
-    <p>Dado que no existe recolección ni bases de datos personales, no hay información sujeta a modificación o eliminación en nuestros servidores. Sin embargo, el usuario tiene garantizado el derecho constitucional a presentar consultas o quejas a través del canal oficial: sushisukidesu2025@gmail.com, las cuales serán atendidas en un plazo máximo de 15 días hábiles.</p>
+    <p>Dado que no existe recolección ni bases de datos personales, no hay información sujeta a modificación o eliminación en nuestros servidores[cite: 4]. Sin embargo, el usuario tiene garantizado el derecho constitucional a presentar consultas o quejas a través del canal oficial: <span id="legal-email-2"></span>, las cuales serán atendidas en un plazo máximo de 15 días hábiles[cite: 4].</p>
 
     <p><em>Última actualización: Septiembre de 2026</em></p>
+
+    <!-- Inyección dinámica de datos legales -->
+    <script type="module">
+        import { AppConfig } from './js/config.js';
+        document.getElementById('title-doc').innerText = `Política de Privacidad - ${AppConfig.cliente.nombre}`;
+        document.getElementById('brand-name-1').innerText = AppConfig.cliente.nombre;
+        document.getElementById('brand-name-2').innerText = AppConfig.cliente.nombre;
+        document.getElementById('legal-name').innerText = AppConfig.cliente.representanteLegal;
+        document.getElementById('legal-doc').innerText = AppConfig.cliente.documentoIdentidad;
+        document.getElementById('legal-address').innerText = AppConfig.cliente.direccionLegal;
+        document.getElementById('legal-email').innerText = AppConfig.cliente.correoPQR;
+        document.getElementById('legal-email-2').innerText = AppConfig.cliente.correoPQR;
+    </script>
 </body>
 </html>

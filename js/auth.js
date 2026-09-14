@@ -17,7 +17,9 @@ export const AuthManager = {
         try {
           const userDocRef = doc(db, 'usuarios', user.uid);
           const userSnap = await getDoc(userDocRef);
-          this.userRole = userSnap.exists() ? userSnap.data().rol : (user.uid === '6pgUHNjYxXOBd7GtYuChQEdg6tm2' ? 'superadmin' : null);
+          
+          // Refactorización: Asignación de rol centralizada y segura
+          this.userRole = userSnap.exists() ? userSnap.data().rol : null;
           
           if (this.userRole) { 
             if (loginOverlay) loginOverlay.classList.add('hidden'); 

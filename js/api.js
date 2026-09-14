@@ -1,17 +1,10 @@
+import { AppConfig } from './config.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC-bFjUVczmEyaEL_jRhmaKJIsuTleooIw",
-  authDomain: "bdmenusukidesu2.firebaseapp.com",
-  projectId: "bdmenusukidesu2",
-  storageBucket: "bdmenusukidesu2.firebasestorage.app",
-  messagingSenderId: "193702895694",
-  appId: "1:193702895694:web:0a0083ea520096ddbc231f"
-};
-
-const app = initializeApp(firebaseConfig);
+// Inicialización dinámica usando el config maestro
+const app = initializeApp(AppConfig.firebase);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
@@ -60,7 +53,8 @@ export const MenuAPI = {
   async fetchItems(isAdmin = false) {
     if (!isAdmin) {
       try {
-        const res = await fetch(`https://recursos-sukidesu.pages.dev/menu.json?v=${new Date().getTime()}`);
+        // Se reemplaza la URL quemada por la variable del CDN de recursos
+        const res = await fetch(`${AppConfig.urls.recursosCdn}/menu.json?v=${new Date().getTime()}`);
         if (!res.ok) throw new Error("Menú no publicado o no encontrado en Cloudflare");
         return await res.json();
       } catch (error) {
@@ -91,7 +85,8 @@ export const MenuAPI = {
     const jsonString = JSON.stringify(data);
     const base64Content = btoa(unescape(encodeURIComponent(jsonString))); 
     
-    const repoPath = `sukidesumenu-svg/image_sukidesu`;
+    // Se reemplaza el repositorio quemado por la variable de configuración
+    const repoPath = AppConfig.github.repoPath;
     const githubApiUrl = `https://api.github.com/repos/${repoPath}/contents/menu.json`;
 
     let sha = "";
