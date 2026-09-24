@@ -32,6 +32,19 @@
   --color-tertiary: #d1c4b9;
   --color-wasabi-green: #ACC677;
   --color-error: #AD2020;
+    /* 6. TIPOGRAFÍA DINÁMICA — fallback a las fuentes originales */
+  --font-dynamic-display: "Anybody", system-ui, -apple-system, sans-serif;
+  --font-dynamic-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+@layer utilities {
+  .font-display            { font-family: var(--font-dynamic-display); }
+  .font-headline-xl        { font-family: var(--font-dynamic-display); font-weight: 800; }
+  .font-headline-lg        { font-family: var(--font-dynamic-display); font-weight: 700; }
+  .font-headline-lg-mobile { font-family: var(--font-dynamic-display); font-weight: 700; }
+  .font-price-display      { font-family: var(--font-dynamic-display); font-weight: 700; }
+  .font-body-md            { font-family: var(--font-dynamic-body); font-weight: 400; }
+  .font-label-bold         { font-family: var(--font-dynamic-body); font-weight: 700; }
 }
 
 @keyframes miRebote {

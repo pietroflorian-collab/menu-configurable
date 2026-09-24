@@ -27,37 +27,70 @@ const SukidesuMenu = {
     const colorTexto      = val(tema.colorTexto);
     const colorTextoSuave = val(tema.colorTextoSuave);
 
-    if (!colorPrimario && !colorFondo && !colorTexto && !colorTextoSuave) return;
+    if (colorPrimario || colorFondo || colorTexto || colorTextoSuave) {
+      let styleEl = document.getElementById('dynamic-theme');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'dynamic-theme';
+        document.head.appendChild(styleEl);
+      }
 
-    let styleEl = document.getElementById('dynamic-theme');
-    if (!styleEl) {
-      styleEl = document.createElement('style');
-      styleEl.id = 'dynamic-theme';
-      document.head.appendChild(styleEl);
+      let css = ':root {\n';
+      if (colorPrimario) {
+        css += `  --color-primary: ${colorPrimario};\n`;
+        css += `  --color-primary-fixed: ${colorPrimario};\n`;
+        css += `  --color-primary-container: ${colorPrimario};\n`;
+        css += `  --color-error: ${colorPrimario};\n`;
+      }
+      if (colorFondo) {
+        css += `  --color-surface: ${colorFondo};\n`;
+        css += `  --color-surface-container-lowest: ${colorFondo};\n`;
+      }
+      if (colorTexto) {
+        css += `  --color-on-surface: ${colorTexto};\n`;
+        css += `  --color-sushi-white: ${colorTexto};\n`;
+      }
+      if (colorTextoSuave) {
+        css += `  --color-on-surface-variant: ${colorTextoSuave};\n`;
+        css += `  --color-tertiary: ${colorTextoSuave};\n`;
+      }
+      css += '}';
+      styleEl.textContent = css;
     }
 
-    let css = ':root {\n';
-    if (colorPrimario) {
-      css += `  --color-primary: ${colorPrimario};\n`;
-      css += `  --color-primary-fixed: ${colorPrimario};\n`;
-      css += `  --color-primary-container: ${colorPrimario};\n`;
-      css += `  --color-error: ${colorPrimario};\n`;
+    // ---------- TIPOGRAFÍA ----------
+    const tip = tema.tipografia;
+    if (tip) {
+      const isObj = typeof tip === 'object' && tip !== null;
+      const display = (isObj && tip.display) || (typeof tip === 'string' ? tip : null);
+      const body    = (isObj && tip.body)    || (typeof tip === 'string' ? tip : null);
+      if (display) this.aplicarFuente('display', display);
+      if (body)    this.aplicarFuente('body', body);
     }
-    if (colorFondo) {
-      css += `  --color-surface: ${colorFondo};\n`;
-      css += `  --color-surface-container-lowest: ${colorFondo};\n`;
-    }
-    if (colorTexto) {
-      css += `  --color-on-surface: ${colorTexto};\n`;
-      css += `  --color-sushi-white: ${colorTexto};\n`;
-    }
-    if (colorTextoSuave) {
-      css += `  --color-on-surface-variant: ${colorTextoSuave};\n`;
-      css += `  --color-tertiary: ${colorTextoSuave};\n`;
-    }
-    css += '}';
+  },
 
-    styleEl.textContent = css;
+  aplicarFuente(rol, nombre) {
+    if (!nombre || typeof nombre !== 'string') return;
+    const clean = nombre.trim();
+    if (!/^[a-zA-Z0-9\s\-]+$/.test(clean) || clean.length > 60) return;
+
+    const param = clean.replace(/\s+/g, '+');
+    const url = `https://fonts.googleapis.com/css2?family=${param}:wght@400;500;600;700;800&display=swap`;
+
+    const id = `dynamic-font-${rol}`;
+    let link = document.getElementById(id);
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    if (link.getAttribute('href') !== url) link.setAttribute('href', url);
+
+    document.documentElement.style.setProperty(
+      `--font-dynamic-${rol}`,
+      `"${clean}", system-ui, -apple-system, sans-serif`
+    );
   },
   
   updateUI() {
