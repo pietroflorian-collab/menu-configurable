@@ -12,10 +12,22 @@ const SukidesuMenu = {
   openModal() { document.getElementById("order-modal").classList.remove("hidden"); }, 
   closeModal() { document.getElementById("order-modal").classList.add("hidden"); },
 
-    aplicarTema(tema) {
-    if (!tema || !tema.colorPrimario) return;
-    const color = String(tema.colorPrimario).trim();
-    if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color)) return;
+      aplicarTema(tema) {
+    if (!tema) return;
+
+    const HEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+    const val = (v) => {
+      if (!v) return null;
+      const s = String(v).trim();
+      return HEX.test(s) ? s : null;
+    };
+
+    const colorPrimario   = val(tema.colorPrimario);
+    const colorFondo      = val(tema.colorFondo);
+    const colorTexto      = val(tema.colorTexto);
+    const colorTextoSuave = val(tema.colorTextoSuave);
+
+    if (!colorPrimario && !colorFondo && !colorTexto && !colorTextoSuave) return;
 
     let styleEl = document.getElementById('dynamic-theme');
     if (!styleEl) {
@@ -24,14 +36,28 @@ const SukidesuMenu = {
       document.head.appendChild(styleEl);
     }
 
-    styleEl.textContent = `
-      :root {
-        --color-primary: ${color};
-        --color-primary-fixed: ${color};
-        --color-primary-container: ${color};
-        --color-error: ${color};
-      }
-    `;
+    let css = ':root {\n';
+    if (colorPrimario) {
+      css += `  --color-primary: ${colorPrimario};\n`;
+      css += `  --color-primary-fixed: ${colorPrimario};\n`;
+      css += `  --color-primary-container: ${colorPrimario};\n`;
+      css += `  --color-error: ${colorPrimario};\n`;
+    }
+    if (colorFondo) {
+      css += `  --color-surface: ${colorFondo};\n`;
+      css += `  --color-surface-container-lowest: ${colorFondo};\n`;
+    }
+    if (colorTexto) {
+      css += `  --color-on-surface: ${colorTexto};\n`;
+      css += `  --color-sushi-white: ${colorTexto};\n`;
+    }
+    if (colorTextoSuave) {
+      css += `  --color-on-surface-variant: ${colorTextoSuave};\n`;
+      css += `  --color-tertiary: ${colorTextoSuave};\n`;
+    }
+    css += '}';
+
+    styleEl.textContent = css;
   },
   
   updateUI() {
