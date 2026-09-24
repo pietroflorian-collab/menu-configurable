@@ -11,6 +11,28 @@ const SukidesuMenu = {
   clearList() { localStorage.removeItem(this.STORAGE_KEY); this.updateUI(); this.renderMenu(); },
   openModal() { document.getElementById("order-modal").classList.remove("hidden"); }, 
   closeModal() { document.getElementById("order-modal").classList.add("hidden"); },
+
+    aplicarTema(tema) {
+    if (!tema || !tema.colorPrimario) return;
+    const color = String(tema.colorPrimario).trim();
+    if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color)) return;
+
+    let styleEl = document.getElementById('dynamic-theme');
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'dynamic-theme';
+      document.head.appendChild(styleEl);
+    }
+
+    styleEl.textContent = `
+      :root {
+        --color-primary: ${color};
+        --color-primary-fixed: ${color};
+        --color-primary-container: ${color};
+        --color-error: ${color};
+      }
+    `;
+  },
   
   updateUI() {
     const list = this.getSelection(); const totalCount = list.reduce((acc, curr) => acc + curr.cantidad, 0); const fabContainer = document.getElementById("fab-container");
@@ -20,10 +42,12 @@ const SukidesuMenu = {
   },
   
   async init() {
-    this.bindEvents();
+    this.bindEvents();  
     try {
-      const data = await MenuAPI.fetchItems(); 
+           const data = await MenuAPI.fetchItems(); 
       this.config = data.config || {};
+      this.tema = data.tema || {};
+      this.aplicarTema(this.tema);
       
       if (this.config.estado_servicio && String(this.config.estado_servicio).toLowerCase() === "suspendido") {
         document.getElementById("maintenance-overlay").classList.replace("hidden", "flex");
@@ -84,9 +108,11 @@ const SukidesuMenu = {
         
         // Si detecta una diferencia entre lo que ve el cliente y lo publicado, actualiza
         if (hashActual !== hashNuevo) {
-          this.allItems = newData.items;
+                    this.allItems = newData.items;
           this.categoriesList = newData.categories || [];
           this.config = newData.config || {};
+          this.tema = newData.tema || {};
+          this.aplicarTema(this.tema);
           
           this.setupCategoryFilter();
           this.renderMenu();
