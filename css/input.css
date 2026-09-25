@@ -47,6 +47,7 @@
   --color-outline-30: color-mix(in oklab, var(--color-outline-variant) 30%, transparent);
   --color-outline-40: color-mix(in oklab, var(--color-outline-variant) 40%, transparent);
   --color-wasabi-30: color-mix(in oklab, var(--color-wasabi-green) 30%, transparent);
+  
 }
 
 @layer utilities {
