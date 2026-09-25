@@ -1,10 +1,10 @@
-import { escapeHTML, formatPrice } from './api.js';
+﻿import { escapeHTML, formatPrice } from './api.js';
 
 export const UI = {
   generarTarjetaPlato(item, rol, currentSelection = []) {
     const isPausado = String(item.es_pausado).toLowerCase() === "true";
     let rawUrl = item.imagen_url || '';
-    // Intercepción arquitectónica: Fuerza la carga de imágenes por Cloudflare CDN
+    // IntercepciÃ³n arquitectÃ³nica: Fuerza la carga de imÃ¡genes por Cloudflare CDN
     rawUrl = rawUrl.replace('https://raw.githubusercontent.com/sukidesumenu-svg/image_sukidesu/main', 'https://recursos-sukidesu.pages.dev');
     
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
@@ -16,9 +16,9 @@ export const UI = {
     const categoriaTag = `<div class="bg-black/70 px-3 py-1 rounded-full border border-primary/50 w-fit backdrop-blur-sm shadow-md"><span class="font-label-bold text-[10px] text-tertiary tracking-wide uppercase">${escapeHTML(item.categoria || 'Entradas')}</span></div>`;
     const promoTag = hasPromoText ? `<div class="absolute top-3 right-3 bg-primary text-sushi-white font-label-bold text-[10px] px-2.5 py-1 rounded shadow-lg transform rotate-3 border border-sushi-white/20 w-fit text-center leading-tight z-20 pointer-events-none">${escapeHTML(item.texto_promo)}</div>` : '';
     const picanteTag = isPicante ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` : '';
-    // Código ajustado con Resiliencia Visual:
-// Se añade el evento onerror para forzar un fallback si la URL de Cloudflare falla
-const fallbackImgUrl = './assets/placeholder.png'; // Asegúrate de tener una imagen de logo genérica en esta ruta
+    // CÃ³digo ajustado con Resiliencia Visual:
+// Se aÃ±ade el evento onerror para forzar un fallback si la URL de Cloudflare falla
+const fallbackImgUrl = './assets/placeholder.png'; // AsegÃºrate de tener una imagen de logo genÃ©rica en esta ruta
 
 const imgTag = optimizedImgUrl 
   ? `<img 
@@ -42,7 +42,7 @@ const imgTag = optimizedImgUrl
           <div class="p-4 flex flex-col flex-grow bg-[#121212]">
             <div class="flex items-start justify-between gap-2 mb-2">
               <h3 class="font-headline-lg-mobile text-lg text-primary leading-tight line-clamp-2">${escapeHTML(item.nombre)}</h3>
-              <div class="bg-[#1f1f1f] px-2.5 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0 mt-0.5">
+              <div class="bg-[#1f1f1f] px-2.5 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-30 shadow-md shrink-0 mt-0.5">
                 ${precioFormatted}
               </div>
             </div>
@@ -99,12 +99,12 @@ const imgTag = optimizedImgUrl
               <h3 class="font-headline-lg-mobile text-xl text-primary leading-tight">${escapeHTML(item.nombre)}</h3>
               <div class="flex items-center gap-2 empty:hidden">${picanteTag}</div>
             </div>
-            <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[14px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0 mt-1 sm:mt-0">
+            <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[14px] text-sushi-white border border-outline-30 shadow-md shrink-0 mt-1 sm:mt-0">
               ${precioFormatted}
             </div>
           </div>
           <p data-expandable="true" class="font-body-md text-secondary text-sm mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200 mt-2" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
-          <div class="flex justify-${rol === 'admin' ? 'end' : 'between items-center'} gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
+          <div class="flex justify-${rol === 'admin' ? 'end' : 'between items-center'} gap-2 pt-4 border-t border-outline-20 mt-auto">
             ${pcActionButtons}
           </div>
         </div>
@@ -123,7 +123,7 @@ const imgTag = optimizedImgUrl
         <div class="p-4 flex flex-col flex-grow bg-[#121212]">
           <div class="flex items-start justify-between gap-3 mb-2">
             <h3 class="font-ig font-semibold text-[15px] text-primary leading-tight">${escapeHTML(item.nombre)}</h3>
-            <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0">
+            <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-30 shadow-md shrink-0">
               ${precioFormatted}
             </div>
           </div>

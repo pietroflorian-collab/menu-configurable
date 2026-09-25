@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
   <meta charset="utf-8"/>
@@ -49,8 +49,8 @@
         <h2 class="text-2xl font-headline-lg-mobile text-primary uppercase">Acceso Restringido</h2>
       </div>
       <form id="login-form" class="flex flex-col gap-4">
-        <input type="email" id="login-email" placeholder="Correo electrónico" required class="p-3 rounded-lg bg-surface-container-highest text-on-surface outline-none focus:border-primary border border-transparent font-body-md">
-        <input type="password" id="login-pass" placeholder="Contraseña" required class="p-3 rounded-lg bg-surface-container-highest text-on-surface outline-none focus:border-primary border border-transparent font-body-md">
+        <input type="email" id="login-email" placeholder="Correo electrÃ³nico" required class="p-3 rounded-lg bg-surface-container-highest text-on-surface outline-none focus:border-primary border border-transparent font-body-md">
+        <input type="password" id="login-pass" placeholder="ContraseÃ±a" required class="p-3 rounded-lg bg-surface-container-highest text-on-surface outline-none focus:border-primary border border-transparent font-body-md">
         <button type="submit" id="login-btn" class="bg-primary text-sushi-white font-label-bold py-3 rounded-lg hover:opacity-90 mt-2 transition-opacity">Ingresar</button>
       </form>
     </div>
@@ -63,25 +63,25 @@
         <div class="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-2 border-primary">
           <div class="flex-1 flex justify-center items-center"><img class="object-contain" src="images/screen.png" alt="Logo"/></div>
         </div>
-        <h1 class="font-headline-lg text-lg text-primary tracking-tighter uppercase mb-0.5">Gestión de Menú</h1>
+        <h1 class="font-headline-lg text-lg text-primary tracking-tighter uppercase mb-0.5">GestiÃ³n de MenÃº</h1>
       </div>
       
-      <!-- BOTÓN MAESTRO -->
+      <!-- BOTÃ“N MAESTRO -->
       <div class="px-2 mb-4 shrink-0">
         <button id="nav-publish-btn" class="w-full bg-wasabi-green text-surface font-label-bold text-sm py-3 rounded-lg shadow-lg hover:opacity-90 flex items-center justify-center transition-all">
-          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">cloud_upload</span> Publicar Menú
+          <span class="material-symbols-outlined mr-2 text-base pointer-events-none">cloud_upload</span> Publicar MenÃº
         </button>
       </div>
 
-      <!-- CONTENEDOR ACORDEÓN -->
+      <!-- CONTENEDOR ACORDEÃ“N -->
       <div class="flex-1 px-2 overflow-y-auto flex flex-col gap-3 pb-4">
         
-        <!-- ACORDEÓN 1: MENÚ Y CATÁLOGO -->
+        <!-- ACORDEÃ“N 1: MENÃš Y CATÃLOGO -->
         <div class="flex flex-col shrink-0">
           <button onclick="document.getElementById('menu-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
             <div class="flex items-center pointer-events-none">
               <span class="material-symbols-outlined mr-3 text-primary">inventory_2</span>
-              <span class="font-label-bold text-tertiary group-hover:text-primary">Catálogo</span>
+              <span class="font-label-bold text-tertiary group-hover:text-primary">CatÃ¡logo</span>
             </div>
             <span class="material-symbols-outlined text-secondary chevron transition-transform duration-200 pointer-events-none">expand_more</span>
           </button>
@@ -90,12 +90,12 @@
               <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">add</span><span class="font-label-bold pointer-events-none text-sm">Nuevo Plato</span>
             </button>
             <button id="nav-cat-btn" class="w-full flex items-center px-4 py-2 text-tertiary hover:bg-surface-bright rounded-lg text-left group">
-              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">folder_managed</span><span class="font-label-bold pointer-events-none text-sm">Categorías</span>
+              <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary pointer-events-none text-sm">folder_managed</span><span class="font-label-bold pointer-events-none text-sm">CategorÃ­as</span>
             </button>
           </div>
         </div>
 
-        <!-- ACORDEÓN 2: MARKETING -->
+        <!-- ACORDEÃ“N 2: MARKETING -->
         <div class="flex flex-col shrink-0">
           <button onclick="document.getElementById('marketing-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
             <div class="flex items-center pointer-events-none">
@@ -114,7 +114,7 @@
           </div>
         </div>
 
-        <!-- ACORDEÓN 3: ADMINISTRACIÓN -->
+        <!-- ACORDEÃ“N 3: ADMINISTRACIÃ“N -->
         <div class="flex flex-col shrink-0">
           <button onclick="document.getElementById('admin-sub').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('rotate-180');" class="w-full flex items-center justify-between px-4 py-3 bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors">
             <div class="flex items-center pointer-events-none">
@@ -134,9 +134,9 @@
           </div>
         </div>
         
-        <!-- CERRAR SESIÓN (Fijo al final) -->
+        <!-- CERRAR SESIÃ“N (Fijo al final) -->
         <button id="nav-logout-btn" class="w-full flex items-center px-4 py-3 mt-auto text-tertiary bg-surface-container-highest hover:bg-surface-bright rounded-lg border border-primary/30 text-left group transition-colors shrink-0">
-          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-error pointer-events-none">logout</span><span class="font-label-bold pointer-events-none">Cerrar Sesión</span>
+          <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-error pointer-events-none">logout</span><span class="font-label-bold pointer-events-none">Cerrar SesiÃ³n</span>
         </button>
         
       </div>
@@ -144,12 +144,12 @@
 
     <main class="flex-1 ml-0 md:ml-64 flex flex-col relative bg-transparent z-10 min-w-0">
       
-      <!-- Menú Hamburguesa[cite: 6] -->
+      <!-- MenÃº Hamburguesa[cite: 6] -->
       <div class="md:hidden flex flex-col z-30 shrink-0">
-        <!-- ALERTA DE CAMBIOS PENDIENTES (Móvil) -->
+        <!-- ALERTA DE CAMBIOS PENDIENTES (MÃ³vil) -->
         <div id="pending-changes-banner" class="hidden bg-[#f59e0b]/20 border-b border-[#f59e0b]/50 text-[#f59e0b] px-4 py-2 flex items-center justify-center gap-2">
           <span class="material-symbols-outlined text-sm">notification_important</span>
-          <span class="font-label-bold text-[10px] leading-tight text-center">Tienes cambios sin publicar. Los clientes ven la versión anterior.</span>
+          <span class="font-label-bold text-[10px] leading-tight text-center">Tienes cambios sin publicar. Los clientes ven la versiÃ³n anterior.</span>
         </div>
 
         <!-- BARRA SUPERIOR LIMPIA -->
@@ -167,7 +167,7 @@
         </div>
       </div>
 
-      <!-- MENÚ DESPLEGABLE MÓVIL (Oculto por defecto)[cite: 6] -->
+      <!-- MENÃš DESPLEGABLE MÃ“VIL (Oculto por defecto)[cite: 6] -->
       <div id="mobile-menu-overlay" class="hidden md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex justify-start" onclick="if(event.target === this) this.classList.add('hidden')">
         <div class="w-64 bg-surface-container-high h-full shadow-2xl border-r border-primary/30 flex flex-col animate-slide-in-left">
           <div class="p-4 border-b border-primary/20 flex justify-between items-center bg-surface">
@@ -178,12 +178,12 @@
           </div>
           <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
             
-            <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-2">Catálogo</div>
+            <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-2">CatÃ¡logo</div>
             <button id="mobile-new-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
               <span class="material-symbols-outlined mr-3 text-secondary text-lg">add_circle</span><span class="font-label-bold text-sm">Nuevo Plato</span>
             </button>
             <button id="mobile-cat-btn" class="w-full flex items-center px-4 py-3 bg-surface-container rounded-lg border border-primary/20 text-tertiary">
-              <span class="material-symbols-outlined mr-3 text-secondary text-lg">folder_managed</span><span class="font-label-bold text-sm">Categorías</span>
+              <span class="material-symbols-outlined mr-3 text-secondary text-lg">folder_managed</span><span class="font-label-bold text-sm">CategorÃ­as</span>
             </button>
 
             <div class="text-xs font-label-bold text-secondary uppercase mb-1 mt-4">Marketing</div>
@@ -205,12 +205,12 @@
           </div>
           <div class="p-4 border-t border-primary/20 bg-surface mt-auto">
             <button id="mobile-logout-btn" class="w-full flex items-center px-4 py-3 bg-error/10 rounded-lg border border-error/30 text-error justify-center">
-              <span class="material-symbols-outlined mr-2 text-lg">logout</span><span class="font-label-bold text-sm">Cerrar Sesión</span>
+              <span class="material-symbols-outlined mr-2 text-lg">logout</span><span class="font-label-bold text-sm">Cerrar SesiÃ³n</span>
             </button>
           </div>
         </div>
       </div>
-      <!-- Fin Menú Hamburguesa -->
+      <!-- Fin MenÃº Hamburguesa -->
 
       <header class="px-5 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shrink-0">
         <div>
@@ -235,7 +235,7 @@
     <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
       <div class="w-full max-w-[760px] bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
         <div class="px-4 py-1 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
-          <h3 id="modal-title" class="font-headline-lg-mobile text-base text-primary">Añadir Nuevo Plato</h3>
+          <h3 id="modal-title" class="font-headline-lg-mobile text-base text-primary">AÃ±adir Nuevo Plato</h3>
           <button id="close-item-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none text-[20px]">close</span></button>
         </div>
         <form id="itemForm" class="flex flex-col flex-1 overflow-hidden">
@@ -245,7 +245,7 @@
               <div class="flex flex-col gap-3">
                 <div class="grid grid-cols-[1fr_2fr] gap-3">
                   <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Categoría</label>
+                    <label class="text-[10px] font-label-bold text-primary uppercase ml-1">CategorÃ­a</label>
                     <select id="item-categoria" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm"></select>
                   </div>
                   <div class="flex flex-col gap-1">
@@ -259,7 +259,7 @@
                     <input id="item-precio" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm" type="number"/>
                   </div>
                   <div class="flex flex-col gap-1 flex-1">
-                    <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Descripción</label>
+                    <label class="text-[10px] font-label-bold text-primary uppercase ml-1">DescripciÃ³n</label>
                     <textarea id="item-descripcion" rows="2" maxlength="300" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary resize-y text-sm min-h-[44px]"></textarea>
                   </div>
                 </div>
@@ -279,15 +279,15 @@
                   <input type="hidden" id="item-imagen-url" />
                 </div>
                 <div class="pt-3 border-t border-primary/30 flex flex-col gap-2">
-                  <div class="flex flex-col mb-1"><label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Días Promoción</label></div>
+                  <div class="flex flex-col mb-1"><label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">DÃ­as PromociÃ³n</label></div>
                   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;" class="text-[11px]">
                     <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Domingo" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Dom</label>
                     <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Lunes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Lun</label>
                     <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Martes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Mar</label>
-                    <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Miércoles" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Mié</label>
+                    <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="MiÃ©rcoles" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>MiÃ©</label>
                     <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Jueves" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Jue</label>
                     <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Viernes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Vie</label>
-                    <label style="grid-column: span 3;" class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Sábado" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Sáb</label>
+                    <label style="grid-column: span 3;" class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="SÃ¡bado" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>SÃ¡b</label>
                   </div>
                   <div class="flex flex-col gap-1 mt-1">
                     <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Texto del Beneficio</label>
@@ -338,7 +338,7 @@
             </label>
             <div class="flex flex-col gap-1">
               <label class="text-[10px] text-primary font-bold uppercase ml-1">Texto del Anuncio</label>
-              <textarea id="config-promo-texto" rows="2" class="w-full bg-surface border border-primary/40 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary resize-none shadow-inner" placeholder="Escribe tu promoción aquí..."></textarea>
+              <textarea id="config-promo-texto" rows="2" class="w-full bg-surface border border-primary/40 rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary resize-none shadow-inner" placeholder="Escribe tu promociÃ³n aquÃ­..."></textarea>
             </div>
             <div class="flex flex-col gap-1">
               <label class="text-[10px] text-primary font-bold uppercase ml-1">Imagen del Anuncio (JPG/PNG/WEBP)</label>
@@ -349,16 +349,16 @@
           <div class="flex flex-col items-center justify-center bg-surface-container-lowest p-0 rounded-xl border border-dashed border-primary/30 relative overflow-hidden mt-1">
             <div class="relative bg-surface-container-lowest overflow-hidden shrink-0 w-full" style="aspect-ratio: 512/192;">
               <img id="admin-preview-promo-img" src="" class="absolute inset-0 w-full h-full object-cover object-left z-0" />
-              <div class="absolute inset-0 flex pointer-events-none z-10 border-4 border-transparent hover:border-wasabi-green/30 transition-all">
-                <div class="h-full border-r-2 border-dashed border-wasabi-green flex items-start p-1.5 w-[45%]"><span class="bg-surface-container-highest/90 text-wasabi-green text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÁREA MASCOTA</span></div>
-                <div class="h-full flex items-start justify-end p-1.5 w-[55%]"><span class="bg-surface-container-highest/90 text-primary text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÁREA TEXTO</span></div>
+              <div class="absolute inset-0 flex pointer-events-none z-10 border-4 border-transparent hover:border-wasabi-30 transition-all">
+                <div class="h-full border-r-2 border-dashed border-wasabi-green flex items-start p-1.5 w-[45%]"><span class="bg-surface-container-highest/90 text-wasabi-green text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÃREA MASCOTA</span></div>
+                <div class="h-full flex items-start justify-end p-1.5 w-[55%]"><span class="bg-surface-container-highest/90 text-primary text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÃREA TEXTO</span></div>
               </div>
               <div class="absolute inset-0 flex z-20 pointer-events-none">
                 <div class="w-[45%]"></div>
                 <div class="flex flex-col justify-center items-end text-right p-4 w-[55%]">
-                  <div class="flex items-center gap-1 mb-1.5"><span class="material-symbols-outlined text-wasabi-green text-sm">campaign</span><h3 class="font-headline-lg-mobile text-sm text-primary uppercase tracking-wide">¡Novedad!</h3></div>
-                  <p id="admin-preview-promo-texto" class="font-body-md text-sushi-white text-[10px] leading-tight mb-2 drop-shadow-md line-clamp-3">El texto irá aquí...</p>
-                  <button class="bg-primary text-sushi-white px-3 py-1.5 font-label-bold rounded-lg text-[10px] shadow-lg pointer-events-auto">¡Ver el Menú!</button>
+                  <div class="flex items-center gap-1 mb-1.5"><span class="material-symbols-outlined text-wasabi-green text-sm">campaign</span><h3 class="font-headline-lg-mobile text-sm text-primary uppercase tracking-wide">Â¡Novedad!</h3></div>
+                  <p id="admin-preview-promo-texto" class="font-body-md text-sushi-white text-[10px] leading-tight mb-2 drop-shadow-md line-clamp-3">El texto irÃ¡ aquÃ­...</p>
+                  <button class="bg-primary text-sushi-white px-3 py-1.5 font-label-bold rounded-lg text-[10px] shadow-lg pointer-events-auto">Â¡Ver el MenÃº!</button>
                 </div>
               </div>
             </div>
@@ -390,11 +390,11 @@
           <div class="w-full md:w-[55%] p-4 overflow-y-auto border-b md:border-b-0 md:border-r border-primary/20 space-y-3 flex flex-col justify-start">
             
             <!-- 1. Datos -->
-            <div class="bg-surface-container rounded-lg p-3 border border-outline-variant/30">
+            <div class="bg-surface-container rounded-lg p-3 border border-outline-30">
               <h4 class="font-label-bold text-xs text-secondary uppercase mb-2 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">link</span> Enlace y Datos</h4>
               <div class="space-y-2">
                 <div class="flex flex-col gap-1">
-                  <label class="text-[10px] text-primary font-bold uppercase">URL del Menú Base</label>
+                  <label class="text-[10px] text-primary font-bold uppercase">URL del MenÃº Base</label>
                   <input id="qr-input-url" type="text" class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-1.5 text-on-surface text-sm focus:border-primary" value="https://menusukidesu.sukidesumenu.workers.dev/?v=2"/>
                 </div>
                 <div class="flex flex-col gap-1">
@@ -405,7 +405,7 @@
             </div>
 
             <!-- 2. Formas y Estilos -->
-            <div class="bg-surface-container rounded-lg p-3 border border-outline-variant/30">
+            <div class="bg-surface-container rounded-lg p-3 border border-outline-30">
               <h4 class="font-label-bold text-xs text-secondary uppercase mb-2 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">category</span> Estilo de Puntos</h4>
               <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
@@ -414,13 +414,13 @@
                     <option value="rounded">Redondeado</option>
                     <option value="dots">Puntos</option>
                     <option value="classy">Elegante</option>
-                    <option value="square">Cuadrado Clásico</option>
+                    <option value="square">Cuadrado ClÃ¡sico</option>
                   </select>
                 </div>
                 <div class="flex flex-col gap-1">
                   <label class="text-[10px] text-primary uppercase">Marcos (Esquinas)</label>
                   <select id="qr-style-corners" class="w-full bg-surface border border-outline-variant rounded-lg px-2 py-1 text-sm text-on-surface">
-                    <option value="extra-rounded">Círculo</option>
+                    <option value="extra-rounded">CÃ­rculo</option>
                     <option value="dot">Punto</option>
                     <option value="square">Cuadrado</option>
                   </select>
@@ -430,7 +430,7 @@
 
             <!-- 3. Colores y Logo -->
             <div class="grid grid-cols-2 gap-3">
-              <div class="bg-surface-container rounded-lg p-3 border border-outline-variant/30">
+              <div class="bg-surface-container rounded-lg p-3 border border-outline-30">
                 <h4 class="font-label-bold text-xs text-secondary uppercase mb-2 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">palette</span> Colores</h4>
                 <div class="flex justify-between gap-1 mt-1">
                   <div class="flex flex-col items-center gap-1">
@@ -448,12 +448,12 @@
                 </div>
               </div>
 
-              <div class="bg-surface-container rounded-lg p-3 border border-outline-variant/30 flex flex-col justify-center">
+              <div class="bg-surface-container rounded-lg p-3 border border-outline-30 flex flex-col justify-center">
                 <h4 class="font-label-bold text-xs text-secondary uppercase mb-2 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">image</span> Logo Central</h4>
                 <input id="qr-input-file" type="file" accept="image/*" class="w-full bg-surface border border-outline-variant rounded-lg px-1 py-1 text-secondary text-[10px] file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-primary-container file:text-sushi-white cursor-pointer"/>
                 <label class="flex items-center gap-2 cursor-pointer mt-3">
                   <input id="qr-logo-bg" type="checkbox" checked class="h-3.5 w-3.5 bg-surface text-primary rounded border-primary/50"/>
-                  <span class="text-[10px] text-secondary leading-tight">Añadir margen</span>
+                  <span class="text-[10px] text-secondary leading-tight">AÃ±adir margen</span>
                 </label>
               </div>
             </div>
@@ -470,7 +470,7 @@
               <div id="qr-preview-text" class="mt-3 font-headline-lg-mobile text-black text-center uppercase tracking-widest text-sm">MESA 1</div>
             </div>
             
-            <p class="text-[10px] text-secondary mt-6 z-10 text-center">Vista previa dinámica.<br/>Los cambios se aplican al instante.</p>
+            <p class="text-[10px] text-secondary mt-6 z-10 text-center">Vista previa dinÃ¡mica.<br/>Los cambios se aplican al instante.</p>
           </div>
         </div>
 
@@ -483,7 +483,7 @@
           </button>
           
           <button id="qr-dl-poster" class="px-4 py-1.5 bg-primary text-sushi-white font-label-bold text-xs rounded-lg flex items-center gap-1.5 shadow-lg hover:opacity-90 transition-opacity">
-            <span class="material-symbols-outlined text-sm">ad_units</span> Descargar Póster
+            <span class="material-symbols-outlined text-sm">ad_units</span> Descargar PÃ³ster
           </button>
         </div>
         
@@ -493,7 +493,7 @@
     <div id="categoryModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
       <div class="w-full max-w-sm bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[90vh] overflow-hidden">
         <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
-          <h3 class="font-headline-lg-mobile text-lg text-primary">Categorías</h3>
+          <h3 class="font-headline-lg-mobile text-lg text-primary">CategorÃ­as</h3>
           <button id="close-cat-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
         </div>
         <div class="p-4 overflow-y-auto space-y-4 flex-1">
@@ -513,18 +513,18 @@
 
   <div id="employeeModal" class="hidden fixed inset-0 bg-black/80 z-50 items-center justify-center p-4">
     <div class="bg-surface-container rounded-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-high">
-        <h2 class="text-xl font-display text-on-surface">Gestión de Personal</h2>
+      <div class="p-4 border-b border-outline-30 flex justify-between items-center bg-surface-container-high">
+        <h2 class="text-xl font-display text-on-surface">GestiÃ³n de Personal</h2>
         <button id="close-emp-btn" class="text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">close</span></button>
       </div>
       <div class="p-6 overflow-y-auto flex-1 flex flex-col md:flex-row gap-6">
         <div class="flex-1 bg-surface-container-highest p-4 rounded-xl h-fit">
           <h3 class="font-label-bold text-primary mb-4">Crear Nuevo Perfil</h3>
           <form id="empForm" class="flex flex-col gap-3">
-            <input type="email" id="emp-email" placeholder="Correo electrónico" required class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-variant/30 focus:border-primary outline-none">
-            <input type="password" id="emp-pass" placeholder="Contraseña (Mín. 6 caracteres)" required minlength="6" class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-variant/30 focus:border-primary outline-none">
-            <select id="emp-rol" class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-variant/30 focus:border-primary outline-none">
-              <option value="editor">Editor (Solo edita menú)</option>
+            <input type="email" id="emp-email" placeholder="Correo electrÃ³nico" required class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-30 focus:border-primary outline-none">
+            <input type="password" id="emp-pass" placeholder="ContraseÃ±a (MÃ­n. 6 caracteres)" required minlength="6" class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-30 focus:border-primary outline-none">
+            <select id="emp-rol" class="w-full bg-surface-container-high text-on-surface px-4 py-2 rounded-lg border border-outline-30 focus:border-primary outline-none">
+              <option value="editor">Editor (Solo edita menÃº)</option>
               <option value="administrador">Administrador (Control total)</option>
             </select>
             <button type="submit" id="submit-emp-btn" class="mt-2 w-full bg-primary text-sushi-white font-label-bold py-2 rounded-lg hover:bg-primary/90 transition-colors">Crear Empleado</button>
@@ -546,11 +546,11 @@
           <span class="material-symbols-outlined text-4xl pointer-events-none">warning</span>
         </div>
         <h3 id="confirm-title" class="text-xl font-headline-lg-mobile text-primary mb-2">Confirmar</h3>
-        <p id="confirm-message" class="text-sm text-secondary font-body-md leading-relaxed whitespace-pre-line">¿Estás seguro de realizar esta acción?</p>
+        <p id="confirm-message" class="text-sm text-secondary font-body-md leading-relaxed whitespace-pre-line">Â¿EstÃ¡s seguro de realizar esta acciÃ³n?</p>
       </div>
       <div class="px-5 py-4 bg-surface-container-highest border-t border-primary/20 flex gap-3 justify-center">
         <button id="cancel-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs border border-primary/40 text-secondary hover:bg-surface-bright transition-colors flex-1">Cancelar</button>
-        <button id="execute-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs bg-error text-white hover:bg-error/90 shadow-md transition-colors flex-1">Sí, Actualizar</button>
+        <button id="execute-confirm-btn" class="px-5 py-2.5 rounded-lg font-label-bold text-xs bg-error text-white hover:bg-error/90 shadow-md transition-colors flex-1">SÃ­, Actualizar</button>
       </div>
     </div>
   </div>

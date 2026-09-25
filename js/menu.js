@@ -1,4 +1,4 @@
-import { MenuAPI, escapeHTML, showToast } from './api.js'; 
+﻿import { MenuAPI, escapeHTML, showToast } from './api.js'; 
 import { UI } from './ui.js';
 
 const SukidesuMenu = {
@@ -22,12 +22,20 @@ const SukidesuMenu = {
       return HEX.test(s) ? s : null;
     };
 
-    const colorPrimario   = val(tema.colorPrimario);
+     const colorPrimario   = val(tema.colorPrimario);
     const colorFondo      = val(tema.colorFondo);
     const colorTexto      = val(tema.colorTexto);
     const colorTextoSuave = val(tema.colorTextoSuave);
+    const colorTarjetas   = val(tema.colorTarjetas);
+    const colorCarrito    = val(tema.colorCarrito);
+    const colorBordes     = val(tema.colorBordes);
+    const colorAcento     = val(tema.colorAcento);
+    const colorSubtitulo  = val(tema.colorSubtitulo);
+    const colorHover      = val(tema.colorHover);
 
-    if (colorPrimario || colorFondo || colorTexto || colorTextoSuave) {
+    if (colorPrimario || colorFondo || colorTexto || colorTextoSuave ||
+        colorTarjetas || colorCarrito || colorBordes || colorAcento ||
+        colorSubtitulo || colorHover) {
       let styleEl = document.getElementById('dynamic-theme');
       if (!styleEl) {
         styleEl = document.createElement('style');
@@ -50,15 +58,33 @@ const SukidesuMenu = {
         css += `  --color-on-surface: ${colorTexto};\n`;
         css += `  --color-sushi-white: ${colorTexto};\n`;
       }
-      if (colorTextoSuave) {
+            if (colorTextoSuave) {
         css += `  --color-on-surface-variant: ${colorTextoSuave};\n`;
         css += `  --color-tertiary: ${colorTextoSuave};\n`;
+      }
+      if (colorTarjetas) {
+        css += `  --color-surface-container-low: ${colorTarjetas};\n`;
+      }
+      if (colorCarrito) {
+        css += `  --color-surface-container-high: ${colorCarrito};\n`;
+      }
+      if (colorBordes) {
+        css += `  --color-outline-variant: ${colorBordes};\n`;
+      }
+      if (colorAcento) {
+        css += `  --color-wasabi-green: ${colorAcento};\n`;
+      }
+      if (colorSubtitulo) {
+        css += `  --color-secondary-fixed: ${colorSubtitulo};\n`;
+      }
+      if (colorHover) {
+        css += `  --color-surface-bright: ${colorHover};\n`;
       }
       css += '}';
       styleEl.textContent = css;
     }
 
-        // ---------- TIPOGRAFÍA ----------
+        // ---------- TIPOGRAFÃA ----------
     const tip = tema.tipografia;
     if (tip) {
       const isObj = typeof tip === 'object' && tip !== null;
@@ -84,7 +110,7 @@ const SukidesuMenu = {
     const list = this.getSelection(); const totalCount = list.reduce((acc, curr) => acc + curr.cantidad, 0); const fabContainer = document.getElementById("fab-container");
     if (totalCount > 0 && fabContainer) { fabContainer.classList.remove("hidden"); document.getElementById("fab-badge").innerText = totalCount; } else if (fabContainer) { fabContainer.classList.add("hidden"); this.closeModal(); }
     const modalList = document.getElementById("modal-item-list"); if (!modalList) return;
-    if (list.length === 0) { modalList.innerHTML = `<div class="text-center py-8"><span class="material-symbols-outlined text-secondary text-4xl mb-2">remove_shopping_cart</span><p class="text-secondary text-sm">No has agregado platos a tu lista.</p></div>`; } else { modalList.innerHTML = list.map(item => `<div class="flex items-center justify-between bg-surface-container-high p-3 rounded-lg border border-outline-variant/20"><span class="font-body-md text-sm text-sushi-white truncate max-w-[60%]">${escapeHTML(item.nombre)}</span><div class="flex items-center gap-2 bg-black border border-outline-variant/40 rounded-lg px-2 py-1"><button data-action="decrease" data-id="${escapeHTML(item.id)}" class="w-6 h-6 text-primary font-bold hover:bg-surface-variant rounded">-</button><span class="font-price-display text-sm text-sushi-white px-1">${item.cantidad}</span><button data-action="increase" data-id="${escapeHTML(item.id)}" class="w-6 h-6 text-wasabi-green font-bold hover:bg-surface-variant rounded">+</button></div></div>`).join(""); }
+    if (list.length === 0) { modalList.innerHTML = `<div class="text-center py-8"><span class="material-symbols-outlined text-secondary text-4xl mb-2">remove_shopping_cart</span><p class="text-secondary text-sm">No has agregado platos a tu lista.</p></div>`; } else { modalList.innerHTML = list.map(item => `<div class="flex items-center justify-between bg-surface-container-high p-3 rounded-lg border border-outline-20"><span class="font-body-md text-sm text-sushi-white truncate max-w-[60%]">${escapeHTML(item.nombre)}</span><div class="flex items-center gap-2 bg-black border border-outline-40 rounded-lg px-2 py-1"><button data-action="decrease" data-id="${escapeHTML(item.id)}" class="w-6 h-6 text-primary font-bold hover:bg-surface-variant rounded">-</button><span class="font-price-display text-sm text-sushi-white px-1">${item.cantidad}</span><button data-action="increase" data-id="${escapeHTML(item.id)}" class="w-6 h-6 text-wasabi-green font-bold hover:bg-surface-variant rounded">+</button></div></div>`).join(""); }
   },
   
   async init() {
@@ -112,8 +138,8 @@ const SukidesuMenu = {
         grid.innerHTML = `
           <div class="col-span-full text-center py-12 px-4 bg-surface-container rounded-xl border border-dashed border-error/50 my-4 flex flex-col items-center">
             <span class="material-symbols-outlined text-error text-5xl mb-3">wifi_off</span>
-            <h3 class="font-headline-lg-mobile text-lg text-on-surface">Problemas de conexión</h3>
-            <p class="font-body-md text-sm text-secondary mt-1 mb-4">No pudimos cargar el menú desde el servidor. Revisa tu señal de internet.</p>
+            <h3 class="font-headline-lg-mobile text-lg text-on-surface">Problemas de conexiÃ³n</h3>
+            <p class="font-body-md text-sm text-secondary mt-1 mb-4">No pudimos cargar el menÃº desde el servidor. Revisa tu seÃ±al de internet.</p>
             <button id="btn-retry-fetch" class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-bold flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all">
               <span class="material-symbols-outlined">refresh</span> Reintentar
             </button>
@@ -121,7 +147,7 @@ const SukidesuMenu = {
         `;
         grid.classList.remove("hidden");
         
-        // Atar el botón a un nuevo intento limpio
+        // Atar el botÃ³n a un nuevo intento limpio
         document.getElementById("btn-retry-fetch")?.addEventListener("click", () => {
           grid.innerHTML = ""; 
           grid.classList.add("hidden");
@@ -129,7 +155,7 @@ const SukidesuMenu = {
           this.init(); 
         }, { once: true });
       }
-      return; // Crucial: detener la ejecución para no renderizar la UI vacía
+      return; // Crucial: detener la ejecuciÃ³n para no renderizar la UI vacÃ­a
     }
     
     document.getElementById("loading-spinner")?.classList.add("hidden"); 
@@ -143,7 +169,7 @@ const SukidesuMenu = {
   },
 
   iniciarSincronizacionEnVivo() {
-    // Evalúa cambios cada 3 minutos (180,000 ms)
+    // EvalÃºa cambios cada 3 minutos (180,000 ms)
     setInterval(async () => {
       try {
         const newData = await MenuAPI.fetchItems();
@@ -164,11 +190,11 @@ const SukidesuMenu = {
           this.renderMenu();
           
           if (typeof showToast === "function") {
-            showToast("Menú actualizado en tiempo real", "info");
+            showToast("MenÃº actualizado en tiempo real", "info");
           }
         }
       } catch (e) {
-        console.error("Sincronización en segundo plano falló:", e);
+        console.error("SincronizaciÃ³n en segundo plano fallÃ³:", e);
       }
     }, 180000);
   },
@@ -182,10 +208,10 @@ const SukidesuMenu = {
   },
   
   setupCategoryFilter() {
-    if (this.categoriesList.length === 0) { document.getElementById("category-bar").innerHTML = `<p class="text-secondary text-sm">No hay categorías disponibles.</p>`; return; }
+    if (this.categoriesList.length === 0) { document.getElementById("category-bar").innerHTML = `<p class="text-secondary text-sm">No hay categorÃ­as disponibles.</p>`; return; }
     let categoriasVisibles = this.categoriesList.filter(c => { const name = (c.nombre || "").toLowerCase(); return !name.includes("combo") && !name.includes("promo"); }).map(c => c.nombre); categoriasVisibles.push("Combos y Promo");
     if (!this.selectedCategory || !categoriasVisibles.includes(this.selectedCategory)) { this.selectedCategory = categoriasVisibles[0]; }
-    const categoryBar = document.getElementById("category-bar"); categoryBar.innerHTML = categoriasVisibles.map(cat => `<button data-category="${escapeHTML(cat)}" class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${this.selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright border border-outline-variant/20'}">${escapeHTML(cat)}</button>`).join("");
+    const categoryBar = document.getElementById("category-bar"); categoryBar.innerHTML = categoriasVisibles.map(cat => `<button data-category="${escapeHTML(cat)}" class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${this.selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright border border-outline-20'}">${escapeHTML(cat)}</button>`).join("");
     const titleEl = document.getElementById("current-category-title"); if (titleEl) titleEl.innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${escapeHTML(this.selectedCategory)}`;
   },
   
@@ -195,36 +221,36 @@ const SukidesuMenu = {
     const today = rawToday.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     
     const filtered = this.allItems.filter(i => { 
-      // 1. Limpieza de categoría base
+      // 1. Limpieza de categorÃ­a base
       const cat = (i.categoria || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       
-      // 2. Extracción y limpieza de los días asignados en la base de datos
+      // 2. ExtracciÃ³n y limpieza de los dÃ­as asignados en la base de datos
       const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) : [];
       
-      // 3. Validación tolerante: verifica si el día actual coincide con el día guardado
+      // 3. ValidaciÃ³n tolerante: verifica si el dÃ­a actual coincide con el dÃ­a guardado
       const isPromoToday = activeDays.some(d => d.startsWith(today) || today.startsWith(d));
       
-      // DEPURACIÓN: Se ejecuta ANTES de los return para garantizar que se imprima
+      // DEPURACIÃ“N: Se ejecuta ANTES de los return para garantizar que se imprima
       if (this.selectedCategory === "Combos y Promo" && activeDays.length > 0) {
-        console.log(`Plato: ${i.nombre} | Días crudos BD: "${i.dias_promo}" | Array limpio:`, activeDays, `| Hoy sistema: "${today}" | Coincidencia: ${isPromoToday}`);
+        console.log(`Plato: ${i.nombre} | DÃ­as crudos BD: "${i.dias_promo}" | Array limpio:`, activeDays, `| Hoy sistema: "${today}" | Coincidencia: ${isPromoToday}`);
       }
       
       if (this.selectedCategory === "Combos y Promo") { 
         // Se muestran todos los platos que sean estructuralmente un combo
         if (cat === "combos" || cat === "combo") return true;
         
-        // Se muestra cualquier plato (de cualquier categoría) si su día promocional coincide con hoy
+        // Se muestra cualquier plato (de cualquier categorÃ­a) si su dÃ­a promocional coincide con hoy
         if (isPromoToday) return true;
         
         // Si no es combo y no aplica para hoy, se oculta exclusivamente de esta vista combinada
         return false;
       }
       
-      // Para el resto de las pestañas (Rollos, Entradas, Bebidas, etc.), los platos se muestran en su categoría nativa
+      // Para el resto de las pestaÃ±as (Rollos, Entradas, Bebidas, etc.), los platos se muestran en su categorÃ­a nativa
       return i.categoria === this.selectedCategory; 
     });
     
-    if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-12 bg-surface-container rounded-xl border border-dashed border-outline-variant/30 my-4"><span class="material-symbols-outlined text-secondary text-5xl mb-3">ramen_dining</span><h3 class="font-headline-lg-mobile text-lg text-secondary">No hay platos disponibles</h3><p class="font-body-md text-xs text-secondary/70 mt-1">Pronto añadiremos nuevas opciones.</p></div>`; return; }
+    if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-12 bg-surface-container rounded-xl border border-dashed border-outline-30 my-4"><span class="material-symbols-outlined text-secondary text-5xl mb-3">ramen_dining</span><h3 class="font-headline-lg-mobile text-lg text-secondary">No hay platos disponibles</h3><p class="font-body-md text-xs text-secondary/70 mt-1">Pronto aÃ±adiremos nuevas opciones.</p></div>`; return; }
     grid.innerHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'client', this.getSelection())).join("");
   },
   
@@ -245,12 +271,12 @@ const SukidesuMenu = {
 document.addEventListener("DOMContentLoaded", () => {
   SukidesuMenu.init();
   
-  // Registro del Service Worker para Estrategia de Caché
+  // Registro del Service Worker para Estrategia de CachÃ©
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then((registration) => {
-          console.log('ServiceWorker registrado con éxito bajo el alcance: ', registration.scope);
+          console.log('ServiceWorker registrado con Ã©xito bajo el alcance: ', registration.scope);
         })
         .catch((error) => {
           console.error('Fallo en el registro del ServiceWorker: ', error);

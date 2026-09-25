@@ -1,4 +1,4 @@
-import { db, MenuAPI, escapeHTML, showToast } from './api.js';
+﻿import { db, MenuAPI, escapeHTML, showToast } from './api.js';
 import { UI } from './ui.js';
 import { AuthManager } from './auth.js';
 import { QRGenerator } from './qr.js';
@@ -52,7 +52,7 @@ const SukidesuAdmin = {
     
     bindClick("promo-save-btn", () => this.savePromoConfig()); 
     
-    // Conexión del botón de recorte al módulo de imágenes pasando los callbacks de vista previa
+    // ConexiÃ³n del botÃ³n de recorte al mÃ³dulo de imÃ¡genes pasando los callbacks de vista previa
     bindClick("confirm-crop-btn", () => {
       ImageUploader.confirmCrop(
         () => this.updateModalPreview(), 
@@ -110,8 +110,8 @@ const SukidesuAdmin = {
     const restantes = 500 - usados;
 
     this.showConfirmDialog(
-      "Publicar Menú en Vivo", 
-      `¿Estás seguro de que ya realizaste TODOS los cambios necesarios en el menú?\n\nTe quedan ${restantes} actualizaciones en vivo este mes.\nAprovecha para agrupar los cambios antes de publicar.`, 
+      "Publicar MenÃº en Vivo", 
+      `Â¿EstÃ¡s seguro de que ya realizaste TODOS los cambios necesarios en el menÃº?\n\nTe quedan ${restantes} actualizaciones en vivo este mes.\nAprovecha para agrupar los cambios antes de publicar.`, 
       async () => {
         const pcBtn = document.getElementById("nav-publish-btn");
         const mobBtn = document.getElementById("mobile-publish-btn");
@@ -129,10 +129,10 @@ const SukidesuAdmin = {
           if (res && res.status === 'success') {
             document.getElementById("pending-changes-banner")?.classList.add("hidden");
             if (this.adminConfig) this.adminConfig.cambios_pendientes = false;
-            showToast("¡Menú publicado en vivo exitosamente!", "success");
+            showToast("Â¡MenÃº publicado en vivo exitosamente!", "success");
           }
         } catch (error) {
-          console.error("Error en publicación:", error);
+          console.error("Error en publicaciÃ³n:", error);
           showToast(`Error: ${error.message}`, "error");
         } finally {
           if (pcBtn) { pcBtn.innerHTML = originalPcText; pcBtn.disabled = false; }
@@ -238,7 +238,7 @@ const SukidesuAdmin = {
         if(docSnap.id === '6pgUHNjYxXOBd7GtYuChQEdg6tm2') return; 
         
         html.push(`
-          <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border border-outline-variant/30">
+          <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border border-outline-30">
             <div>
               <p class="font-label-bold text-sm text-on-surface">${escapeHTML(data.email || 'Sin correo registrado')}</p>
               <p class="text-xs text-primary uppercase">${escapeHTML(data.rol)}</p>
@@ -278,7 +278,7 @@ const SukidesuAdmin = {
   },
 
   async revokeEmployee(uid) {
-    this.showConfirmDialog("Revocar Acceso", "¿Estás seguro de revocar permanentemente el acceso a este empleado? No podrá volver a ingresar al sistema.", async () => {
+    this.showConfirmDialog("Revocar Acceso", "Â¿EstÃ¡s seguro de revocar permanentemente el acceso a este empleado? No podrÃ¡ volver a ingresar al sistema.", async () => {
       try { 
         await deleteDoc(doc(db, 'usuarios', uid)); 
         showToast("Acceso revocado", "success"); 
@@ -301,7 +301,7 @@ const SukidesuAdmin = {
   },
   
   updatePromoPreview() {
-    const texto = document.getElementById("config-promo-texto").value || "Tu texto aparecerá aquí..."; 
+    const texto = document.getElementById("config-promo-texto").value || "Tu texto aparecerÃ¡ aquÃ­..."; 
     const url = document.getElementById("config-promo-img").value.trim();
     document.getElementById("admin-preview-promo-texto").innerText = texto; 
     const imgEl = document.getElementById("admin-preview-promo-img");
@@ -379,7 +379,7 @@ const SukidesuAdmin = {
       this.selectedCategory = categoriasVisibles[0].nombre;
     }
     
-    document.getElementById("admin-category-bar").innerHTML = categoriasVisibles.map(cat => `<button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary text-sushi-white' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}</button>`).join("");
+    document.getElementById("admin-category-bar").innerHTML = categoriasVisibles.map(cat => `<button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary text-sushi-white' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? 'â¸' : ''}</button>`).join("");
   },
   
   filterAdminCategory(cat) { 
@@ -412,7 +412,7 @@ const SukidesuAdmin = {
     });
     
     const itemsHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'admin')).join(""); 
-    grid.innerHTML = itemsHTML + `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
+    grid.innerHTML = itemsHTML + `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">AÃ±adir Nuevo</span></div>`;
     document.getElementById("btn-add-grid")?.addEventListener('click', () => this.openModal());
   },
 
@@ -423,7 +423,7 @@ const SukidesuAdmin = {
   
   renderCategoryManageList() {
     document.getElementById("category-manage-list").innerHTML = this.adminCategories.map(cat => `
-      <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border border-outline-variant/30">
+      <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border border-outline-30">
         <span class="font-label-bold text-sm ${cat.es_pausada ? 'line-through text-secondary' : 'text-on-surface'}">${escapeHTML(cat.nombre)}</span>
         <div class="flex gap-2">
           <button data-action="toggle-cat" data-id="${escapeHTML(cat.id)}" data-state="${!cat.es_pausada}" class="px-3 py-1 rounded text-xs font-label-bold ${cat.es_pausada ? 'bg-primary text-sushi-white' : 'bg-surface-variant text-secondary'}">${cat.es_pausada ? 'Reactivar' : 'Pausar'}</button>
@@ -443,7 +443,7 @@ const SukidesuAdmin = {
       const res = await MenuAPI.createCategory({ nombre: document.getElementById("new-cat-name").value.trim() }); 
       if (res && res.status === "success") { 
         document.getElementById("new-cat-name").value = ""; 
-        showToast("Categoría creada", "success"); 
+        showToast("CategorÃ­a creada", "success"); 
         document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         await this.loadAdminData(); 
         this.renderCategoryManageList(); 
@@ -473,7 +473,7 @@ const SukidesuAdmin = {
   },
   
   async deleteCategory(id) {
-    this.showConfirmDialog("Eliminar Categoría", "Esta acción es irreversible y podría afectar los platos que tengan esta categoría asignada.", async () => {
+    this.showConfirmDialog("Eliminar CategorÃ­a", "Esta acciÃ³n es irreversible y podrÃ­a afectar los platos que tengan esta categorÃ­a asignada.", async () => {
       try { 
         const res = await MenuAPI.deleteCategory(id); 
         if (res && res.status === "success") { 
@@ -491,8 +491,8 @@ const SukidesuAdmin = {
   updateModalPreview() {
     const itemEnVivo = { 
       nombre: document.getElementById("item-nombre").value || "Nombre del Plato", 
-      categoria: document.getElementById("item-categoria").value || "Categoría", 
-      descripcion: document.getElementById("item-descripcion").value || "Descripción del plato...", 
+      categoria: document.getElementById("item-categoria").value || "CategorÃ­a", 
+      descripcion: document.getElementById("item-descripcion").value || "DescripciÃ³n del plato...", 
       precio: document.getElementById("item-precio").value || 0, 
       imagen_url: document.getElementById("item-imagen-url").value || "", 
       es_picante: document.getElementById("item-picante").checked, 
@@ -526,7 +526,7 @@ const SukidesuAdmin = {
     document.getElementById("item-id").value = item ? item.id : ""; 
     document.getElementById("item-file-input").value = ""; 
     ImageUploader.pendingImageBase64 = null; 
-    document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato"; 
+    document.getElementById("modal-title").innerText = item ? "Editar Plato" : "AÃ±adir Nuevo Plato"; 
     document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
     
     if (item) {
@@ -559,7 +559,7 @@ const SukidesuAdmin = {
   },
   
   async deleteItem(id) { 
-    this.showConfirmDialog("Eliminar Plato", "¿Estás seguro? Esta acción borrará el plato y la imagen del Menú de forma permanente.", async () => {
+    this.showConfirmDialog("Eliminar Plato", "Â¿EstÃ¡s seguro? Esta acciÃ³n borrarÃ¡ el plato y la imagen del MenÃº de forma permanente.", async () => {
       try { 
         const item = this.adminItems.find(i => i.id == id);
         
@@ -651,7 +651,7 @@ const SukidesuAdmin = {
       const res = itemId ? await MenuAPI.updateItem(payload) : await MenuAPI.createItem(payload);
       
       if (res && res.status === "success") { 
-        showToast("Plato guardado con éxito", "success"); 
+        showToast("Plato guardado con Ã©xito", "success"); 
         document.getElementById("pending-changes-banner")?.classList.remove("hidden");
         this.closeModalHelper("itemModal"); 
         await this.loadAdminData(); 

@@ -41,6 +41,12 @@
   --radius-lg: var(--dynamic-radius-lg, 0.5rem);
   --radius-xl: var(--dynamic-radius-xl, 0.75rem);
   --radius-2xl: var(--dynamic-radius-2xl, 1rem);
+
+    /* 8. VARIANTES CON OPACIDAD — se resuelven en runtime con color-mix() */
+  --color-outline-20: color-mix(in oklab, var(--color-outline-variant) 20%, transparent);
+  --color-outline-30: color-mix(in oklab, var(--color-outline-variant) 30%, transparent);
+  --color-outline-40: color-mix(in oklab, var(--color-outline-variant) 40%, transparent);
+  --color-wasabi-30: color-mix(in oklab, var(--color-wasabi-green) 30%, transparent);
 }
 
 @layer utilities {
