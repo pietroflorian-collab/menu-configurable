@@ -32,9 +32,15 @@
   --color-tertiary: #d1c4b9;
   --color-wasabi-green: #ACC677;
   --color-error: #AD2020;
-    /* 6. TIPOGRAFÍA DINÁMICA — fallback a las fuentes originales */
+
+  /* 6. TIPOGRAFÍA DINÁMICA — fallback a las fuentes originales */
   --font-dynamic-display: "Anybody", system-ui, -apple-system, sans-serif;
   --font-dynamic-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+
+    /* 7. RADIOS DE BORDE DINÁMICOS — fallback a los valores default de Tailwind */
+  --radius-lg: var(--dynamic-radius-lg, 0.5rem);
+  --radius-xl: var(--dynamic-radius-xl, 0.75rem);
+  --radius-2xl: var(--dynamic-radius-2xl, 1rem);
 }
 
 @layer utilities {

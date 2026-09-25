@@ -12,7 +12,7 @@ const SukidesuMenu = {
   openModal() { document.getElementById("order-modal").classList.remove("hidden"); }, 
   closeModal() { document.getElementById("order-modal").classList.add("hidden"); },
 
-      aplicarTema(tema) {
+    aplicarTema(tema) {
     if (!tema) return;
 
     const HEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -58,7 +58,7 @@ const SukidesuMenu = {
       styleEl.textContent = css;
     }
 
-    // ---------- TIPOGRAFÍA ----------
+        // ---------- TIPOGRAFÍA ----------
     const tip = tema.tipografia;
     if (tip) {
       const isObj = typeof tip === 'object' && tip !== null;
@@ -67,32 +67,19 @@ const SukidesuMenu = {
       if (display) this.aplicarFuente('display', display);
       if (body)    this.aplicarFuente('body', body);
     }
-  },
 
-  aplicarFuente(rol, nombre) {
-    if (!nombre || typeof nombre !== 'string') return;
-    const clean = nombre.trim();
-    if (!/^[a-zA-Z0-9\s\-]+$/.test(clean) || clean.length > 60) return;
-
-    const param = clean.replace(/\s+/g, '+');
-    const url = `https://fonts.googleapis.com/css2?family=${param}:wght@400;500;600;700;800&display=swap`;
-
-    const id = `dynamic-font-${rol}`;
-    let link = document.getElementById(id);
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+    // ---------- RADIOS DE BORDE ----------
+    const radio = tema.radioBordes;
+    if (radio !== undefined && radio !== null && radio !== '') {
+      const n = parseFloat(String(radio).replace(/[^\d.]/g, ''));
+      if (!isNaN(n) && n >= 0 && n <= 48) {
+        document.documentElement.style.setProperty('--dynamic-radius-lg', n + 'px');
+        document.documentElement.style.setProperty('--dynamic-radius-xl', (n * 1.5) + 'px');
+        document.documentElement.style.setProperty('--dynamic-radius-2xl', (n * 2) + 'px');
+      }
     }
-    if (link.getAttribute('href') !== url) link.setAttribute('href', url);
-
-    document.documentElement.style.setProperty(
-      `--font-dynamic-${rol}`,
-      `"${clean}", system-ui, -apple-system, sans-serif`
-    );
   },
-  
+    
   updateUI() {
     const list = this.getSelection(); const totalCount = list.reduce((acc, curr) => acc + curr.cantidad, 0); const fabContainer = document.getElementById("fab-container");
     if (totalCount > 0 && fabContainer) { fabContainer.classList.remove("hidden"); document.getElementById("fab-badge").innerText = totalCount; } else if (fabContainer) { fabContainer.classList.add("hidden"); this.closeModal(); }
