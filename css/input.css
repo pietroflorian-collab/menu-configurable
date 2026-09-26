@@ -4,70 +4,165 @@
 @source "../js/**/*.js";
 
 @theme {
-  /* 1. FONDOS: Negro puro para el lienzo, gris muy oscuro (#121212) para tarjetas */
+  /* 1. COLORES */
   --color-surface: #000000;
   --color-surface-container-lowest: #000000;
   --color-surface-container-low: #0a0a0a;
-  --color-surface-container: #121212; 
+  --color-surface-container: #121212;
   --color-surface-container-high: #1a1a1a;
   --color-surface-container-highest: #242424;
   --color-surface-bright: #393939;
 
-  /* 2. TÍTULOS Y LOGOS: Tu rojo oficial de marca (Cero salmón) */
   --color-primary: #AD2020;
   --color-primary-fixed: #AD2020;
-  
-  /* 3. BOTONES PRINCIPALES: Combinación de rojo profundo y texto blanco */
   --color-primary-container: #b71f22;
   --color-on-primary-container: #ffffff;
-  
-  /* 4. TEXTOS SECUNDARIOS: Tonos opacos para descripciones e ingredientes */
+
   --color-on-surface: #e2e2e2;
   --color-on-surface-variant: #e3beba;
   --color-secondary-fixed: #ffb3b1;
   --color-sushi-white: #FFFFFF;
 
-  /* 5. LÍNEAS DIVISORIAS Y ACENTOS */
-  --color-outline-variant: #5b403e; /* Borde ultra sutil con un mínimo tinte rojizo/marrón */
+  --color-outline-variant: #5b403e;
   --color-tertiary: #d1c4b9;
   --color-wasabi-green: #ACC677;
   --color-error: #AD2020;
 
-  /* 6. TIPOGRAFÍA DINÁMICA — fallback a las fuentes originales */
-  --font-dynamic-display: "Anybody", system-ui, -apple-system, sans-serif;
-  --font-dynamic-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-
-    /* 7. RADIOS DE BORDE DINÁMICOS — fallback a los valores default de Tailwind */
-  --radius-lg: var(--dynamic-radius-lg, 0.5rem);
-  --radius-xl: var(--dynamic-radius-xl, 0.75rem);
-  --radius-2xl: var(--dynamic-radius-2xl, 1rem);
-
-    /* 8. VARIANTES CON OPACIDAD — se resuelven en runtime con color-mix() */
   --color-outline-20: color-mix(in oklab, var(--color-outline-variant) 20%, transparent);
   --color-outline-30: color-mix(in oklab, var(--color-outline-variant) 30%, transparent);
   --color-outline-40: color-mix(in oklab, var(--color-outline-variant) 40%, transparent);
   --color-wasabi-30: color-mix(in oklab, var(--color-wasabi-green) 30%, transparent);
-  
+
+  /* 2. RADIOS */
+  --radius-lg: var(--dynamic-radius-lg, 0.5rem);
+  --radius-xl: var(--dynamic-radius-xl, 0.75rem);
+  --radius-2xl: var(--dynamic-radius-2xl, 1rem);
+
+  /* 3. TIPOGRAFÍA — 27 CONTROLES */
+  --font-nav-negocio: "Anybody", system-ui, sans-serif;
+  --font-nav-link: "Space Grotesk", system-ui, sans-serif;
+  --font-hero-eslogan: "Anybody", system-ui, sans-serif;
+  --font-hero-descripcion: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-cat-titulo: "Space Grotesk", system-ui, sans-serif;
+  --font-cat-boton: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-plato-nombre: "Anybody", system-ui, sans-serif;
+  --font-plato-precio: "Space Grotesk", system-ui, sans-serif;
+  --font-plato-descripcion: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-plato-tag: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-plato-promo: "Space Grotesk", system-ui, sans-serif;
+  --font-plato-picante: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-plato-foto: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-modal-titulo: "Space Grotesk", system-ui, sans-serif;
+  --font-modal-item: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-modal-cantidad: "Space Grotesk", system-ui, sans-serif;
+  --font-modal-botones: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-modal-vacio: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-fab-texto: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-fab-badge: "Space Grotesk", system-ui, sans-serif;
+  --font-mant-titulo: "Space Grotesk", system-ui, sans-serif;
+  --font-mant-descripcion: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-promo-texto: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-promo-botones: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-footer-texto: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-footer-links: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-toast: "Inter", system-ui, sans-serif;
+
+  /* 4. TAMAÑOS — mobile (65% del desktop) */
+  --size-nav-negocio: 30px;
+  --size-nav-link: 14px;
+  --size-hero-eslogan: 30px;
+  --size-hero-descripcion: 14px;
+  --size-cat-titulo: 20px;
+  --size-cat-boton: 13px;
+  --size-plato-nombre: 15px;
+  --size-plato-precio: 13px;
+  --size-plato-descripcion: 12px;
+  --size-plato-tag: 10px;
+  --size-plato-promo: 10px;
+  --size-plato-picante: 9px;
+  --size-plato-foto: 11px;
+  --size-modal-titulo: 18px;
+  --size-modal-item: 14px;
+  --size-modal-cantidad: 14px;
+  --size-modal-botones: 12px;
+  --size-modal-vacio: 14px;
+  --size-fab-texto: 14px;
+  --size-fab-badge: 12px;
+  --size-mant-titulo: 24px;
+  --size-mant-descripcion: 14px;
+  --size-promo-texto: 14px;
+  --size-promo-botones: 12px;
+  --size-footer-texto: 12px;
+  --size-footer-links: 12px;
+  --size-toast: 12px;
 }
 
 @layer utilities {
-  .font-display            { font-family: var(--font-dynamic-display); }
-  .font-headline-xl        { font-family: var(--font-dynamic-display); font-weight: 800; }
-  .font-headline-lg        { font-family: var(--font-dynamic-display); font-weight: 700; }
-  .font-headline-lg-mobile { font-family: var(--font-dynamic-display); font-weight: 700; }
-  .font-price-display      { font-family: var(--font-dynamic-display); font-weight: 700; }
-  .font-body-md            { font-family: var(--font-dynamic-body); font-weight: 400; }
-  .font-label-bold         { font-family: var(--font-dynamic-body); font-weight: 700; }
+  /* Fuentes */
+  .font-nav-negocio      { font-family: var(--font-nav-negocio); }
+  .font-nav-link         { font-family: var(--font-nav-link); }
+  .font-hero-eslogan     { font-family: var(--font-hero-eslogan); }
+  .font-hero-descripcion { font-family: var(--font-hero-descripcion); }
+  .font-cat-titulo       { font-family: var(--font-cat-titulo); }
+  .font-cat-boton        { font-family: var(--font-cat-boton); }
+  .font-plato-nombre     { font-family: var(--font-plato-nombre); }
+  .font-plato-precio     { font-family: var(--font-plato-precio); }
+  .font-plato-descripcion{ font-family: var(--font-plato-descripcion); }
+  .font-plato-tag        { font-family: var(--font-plato-tag); }
+  .font-plato-promo      { font-family: var(--font-plato-promo); }
+  .font-plato-picante    { font-family: var(--font-plato-picante); }
+  .font-plato-foto       { font-family: var(--font-plato-foto); }
+  .font-modal-titulo     { font-family: var(--font-modal-titulo); }
+  .font-modal-item       { font-family: var(--font-modal-item); }
+  .font-modal-cantidad   { font-family: var(--font-modal-cantidad); }
+  .font-modal-botones    { font-family: var(--font-modal-botones); }
+  .font-modal-vacio      { font-family: var(--font-modal-vacio); }
+  .font-fab-texto        { font-family: var(--font-fab-texto); }
+  .font-fab-badge        { font-family: var(--font-fab-badge); }
+  .font-mant-titulo      { font-family: var(--font-mant-titulo); }
+  .font-mant-descripcion { font-family: var(--font-mant-descripcion); }
+  .font-promo-texto      { font-family: var(--font-promo-texto); }
+  .font-promo-botones    { font-family: var(--font-promo-botones); }
+  .font-footer-texto     { font-family: var(--font-footer-texto); }
+  .font-footer-links     { font-family: var(--font-footer-links); }
+  .font-toast            { font-family: var(--font-toast); }
+
+  /* Tamaños */
+  .size-nav-negocio      { font-size: var(--size-nav-negocio); line-height: 1.1; }
+  .size-nav-link         { font-size: var(--size-nav-link); line-height: 1.3; }
+  .size-hero-eslogan     { font-size: var(--size-hero-eslogan); line-height: 1.1; }
+  .size-hero-descripcion { font-size: var(--size-hero-descripcion); line-height: 1.5; }
+  .size-cat-titulo       { font-size: var(--size-cat-titulo); line-height: 1.3; }
+  .size-cat-boton        { font-size: var(--size-cat-boton); line-height: 1.3; }
+  .size-plato-nombre     { font-size: var(--size-plato-nombre); line-height: 1.2; }
+  .size-plato-precio     { font-size: var(--size-plato-precio); line-height: 1.2; }
+  .size-plato-descripcion{ font-size: var(--size-plato-descripcion); line-height: 1.4; }
+  .size-plato-tag        { font-size: var(--size-plato-tag); line-height: 1.3; }
+  .size-plato-promo      { font-size: var(--size-plato-promo); line-height: 1.2; }
+  .size-plato-picante    { font-size: var(--size-plato-picante); line-height: 1.2; }
+  .size-plato-foto       { font-size: var(--size-plato-foto); line-height: 1.3; }
+  .size-modal-titulo     { font-size: var(--size-modal-titulo); line-height: 1.3; }
+  .size-modal-item       { font-size: var(--size-modal-item); line-height: 1.4; }
+  .size-modal-cantidad   { font-size: var(--size-modal-cantidad); line-height: 1.4; }
+  .size-modal-botones    { font-size: var(--size-modal-botones); line-height: 1.3; }
+  .size-modal-vacio      { font-size: var(--size-modal-vacio); line-height: 1.4; }
+  .size-fab-texto        { font-size: var(--size-fab-texto); line-height: 1.3; }
+  .size-fab-badge        { font-size: var(--size-fab-badge); line-height: 1.3; }
+  .size-mant-titulo      { font-size: var(--size-mant-titulo); line-height: 1.2; }
+  .size-mant-descripcion { font-size: var(--size-mant-descripcion); line-height: 1.5; }
+  .size-promo-texto      { font-size: var(--size-promo-texto); line-height: 1.4; }
+  .size-promo-botones    { font-size: var(--size-promo-botones); line-height: 1.3; }
+  .size-footer-texto     { font-size: var(--size-footer-texto); line-height: 1.4; }
+  .size-footer-links     { font-size: var(--size-footer-links); line-height: 1.4; }
+  .size-toast            { font-size: var(--size-toast); line-height: 1.4; }
 }
 
 @keyframes miRebote {
   0%, 100% { transform: translateY(-20px); }
   50% { transform: translateY(15px); }
 }
+.rebote-amplio { animation: miRebote 3s ease-in-out infinite; }
 
-.rebote-amplio {
-  animation: miRebote 3s ease-in-out infinite;
-}
 @layer utilities {
   @keyframes slideInLeft {
     from { transform: translateX(-100%); opacity: 0; }
