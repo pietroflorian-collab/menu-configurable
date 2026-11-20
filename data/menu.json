@@ -1,0 +1,23 @@
+{
+  "tema": {
+    "colorPrimario": "#18181b",
+    "colorFondo": "#000000",
+    "colorTexto": "#e2e2e2",
+    "colorTextoSuave": "#e3beba",
+    "colorTarjetas": "#0a0a0a",
+    "colorCarrito": "#1a1a1a",
+    "colorBordes": "#5b403e",
+    "colorAcento": "#acc677",
+    "colorSubtitulo": "#ffb3b1",
+    "colorHover": "#393939",
+    "radioBordes": "14",
+    "fuenteNavNegocio": "Edu QLD Hand",
+    "tamañoNavNegocio": 46,
+    "fuenteNavLink": "Parisienne",
+    "tamañoNavLink": 14,
+    "fuenteHeroEslogan": "Space Grotesk",
+    "tamañoHeroEslogan": 46,
+    "fuenteHeroDescripcion": "Playwrite Cuba",
+    "tamañoHeroDescripcion": 16
+  }
+}
